@@ -4,7 +4,9 @@ Tovuti ya Mkulima Agricultural Organization (MAo) iko kwenye Cloudflare Pages, i
 
 Lugha ya mwanzo ni English. Kichagua lugha kwenye navigation hubadilisha maudhui kati ya English na Kiswahili. Chaguo la mtumiaji huhifadhiwa kwenye browser yake; mtumiaji mpya huona English.
 
-Kurasa za umma ni home `/`, About `/about/`, Our focus `/focus/`, Updates `/updates/`, na Contact `/contact/`. Navigation ya home inafungua kurasa hizi. Sehemu na muonekano wa home vimebakia vilevile; yaliyobadilika humo ni link za navigation pekee. Kurasa mpya zinatumia mfumo uleule wa lugha na muonekano wa MAo. Ukurasa wa Updates unasoma posts zilizochapishwa kutoka CMS, huku update ya kwanza ikiwa fallback wakati API haipatikani.
+Kurasa za umma ni home `/`, About `/about/`, Our focus `/focus/`, Updates `/updates/`, Contact `/contact/`, na Donate `/donate/`. Navigation ya home inafungua kurasa hizi. Sehemu za home zimebakia vilevile; menyu ina kitufe kipya cha Donate. Kurasa zinatumia mfumo uleule wa lugha na muonekano wa MAo. Ukurasa wa Updates unasoma posts zilizochapishwa kutoka CMS, huku update ya kwanza ikiwa fallback wakati API haipatikani.
+
+Ukurasa wa Donate unaonyesha maelezo ya akaunti ya CRDB yaliyotolewa moja kwa moja na MAo. Ni maelekezo ya bank transfer; tovuti haisindiki malipo mtandaoni. `assets/img/crdb-logo.svg` imetolewa na MAo na hutumika kama nembo ya benki kwenye ukurasa huo. Favicon na branding ya tovuti vinaendelea kutumia nembo ya MAo.
 
 Typography: maandishi yote yasiyo headings hutumia Inter, ikiwa ni pamoja na lebo ndogo, namba za kadi na anuani. Headings zimebakia Fraunces. Sheria hizi ni zilezile kwa upana wote wa vifaa.
 

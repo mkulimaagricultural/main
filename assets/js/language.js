@@ -47,7 +47,14 @@
       updatesPageLead: 'Stories and activities shared by the MAo team. Each update is available in English and Kiswahili.',
       contactPageLead: 'Get in touch through our official email or postal address. We welcome conversations about agriculture, learning and partnership.',
       readUpdate: 'Read update', emailUs: 'Email MAo', visitWebsite: 'Visit our website', constitutionNote: 'Our organizational goals are described in the first edition of the MAo constitution (2024).',
-      contactSocialTitle: 'Connect with MAo', contactSocialBody: 'Follow our channels for news and updates.', noPhoneNote: 'Please use the official email for enquiries.'
+      contactSocialTitle: 'Connect with MAo', contactSocialBody: 'Follow our channels for news and updates.', noPhoneNote: 'Please use the official email for enquiries.',
+      navDonate: 'Donate', donatePageTitle: 'Donate | MAo', donatePageMeta: 'Support Mkulima Agricultural Organization with a direct bank transfer.',
+      donateLabel: 'Support MAo', donateTitle: 'Help grow opportunity',
+      donateLead: 'Your contribution helps MAo work toward its mission of expanding knowledge and opportunity in sustainable agriculture.',
+      donateMethodLabel: 'Bank transfer', donateMethodTitle: 'Make a donation',
+      donateMethodBody: 'Use the CRDB Bank details below to transfer directly to Mkulima Agricultural Organization.',
+      donateBankType: 'Bank account', donateAccountNameLabel: 'Account name', donateAccountNumberLabel: 'Account number',
+      donateContactLead: 'Questions about making a donation?'
     },
     sw: {
       metaDescription: 'Mkulima Agricultural Organization (MAo) inalenga kuwawezesha wanawake na vijana kupitia kilimo chenye tija na endelevu.',
@@ -94,7 +101,14 @@
       updatesPageLead: 'Habari na shughuli zinazoshirikishwa na timu ya MAo. Kila taarifa inapatikana kwa Kiingereza na Kiswahili.',
       contactPageLead: 'Wasiliana nasi kupitia barua pepe rasmi au anuani ya posta. Tunakaribisha mazungumzo kuhusu kilimo, elimu na ushirikiano.',
       readUpdate: 'Soma taarifa', emailUs: 'Tuma barua pepe', visitWebsite: 'Tembelea tovuti', constitutionNote: 'Malengo ya shirika yameainishwa katika toleo la kwanza la Katiba ya MAo (2024).',
-      contactSocialTitle: 'Ungana na MAo', contactSocialBody: 'Tufuatilie kwenye mitandao kwa habari na taarifa.', noPhoneNote: 'Tumia barua pepe rasmi kwa maulizo.'
+      contactSocialTitle: 'Ungana na MAo', contactSocialBody: 'Tufuatilie kwenye mitandao kwa habari na taarifa.', noPhoneNote: 'Tumia barua pepe rasmi kwa maulizo.',
+      navDonate: 'Changia', donatePageTitle: 'Changia | MAo', donatePageMeta: 'Saidia Mkulima Agricultural Organization kwa kufanya uhamisho wa benki wa moja kwa moja.',
+      donateLabel: 'Saidia MAo', donateTitle: 'Saidia kukuza fursa',
+      donateLead: 'Mchango wako unasaidia MAo kufuatilia dhamira yake ya kupanua maarifa na fursa katika kilimo endelevu.',
+      donateMethodLabel: 'Uhamisho wa benki', donateMethodTitle: 'Toa mchango',
+      donateMethodBody: 'Tumia taarifa za CRDB Bank hapa chini kutuma mchango moja kwa moja kwa Mkulima Agricultural Organization.',
+      donateBankType: 'Akaunti ya benki', donateAccountNameLabel: 'Jina la akaunti', donateAccountNumberLabel: 'Namba ya akaunti',
+      donateContactLead: 'Una swali kuhusu kutoa mchango?'
     }
   };
 

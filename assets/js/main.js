@@ -28,7 +28,7 @@
     });
 
     // Close on link click
-    links.querySelectorAll('.nav__link, .nav__cta').forEach(link => {
+    links.querySelectorAll('.nav__link, .nav__cta, .nav__donate').forEach(link => {
       link.addEventListener('click', () => {
         links.classList.remove('nav__links--open');
         toggle.classList.remove('nav__toggle--open');
