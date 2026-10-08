@@ -12,3 +12,21 @@
 
 /* Do not leave an empty dashboard status card after successful load. */
 #admin-status[hidden]{display:none!important}
+
+/* First CMS entry: MAo emblem followed by Studio, centered on its own layer. */
+.mao-studio-intro{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:#f7f6f1;pointer-events:none}
+html.mao-studio-intro-active .mao-studio-intro{display:flex;pointer-events:auto;animation:mao-studio-intro-curtain 1350ms ease-in-out both}
+.mao-studio-intro__brand{display:flex;align-items:center;justify-content:center;gap:clamp(.6rem,2.5vw,1.2rem);max-width:90vw;animation:mao-studio-intro-brand 1350ms cubic-bezier(.2,.8,.2,1) both}
+.mao-studio-intro__brand img{display:block;width:clamp(78px,17vw,112px);height:auto;max-height:112px;object-fit:contain}
+.mao-studio-intro__brand strong{color:#15382b;font-family:'Libre Caslon Condensed',Georgia,serif;font-size:clamp(2.15rem,6vw,3.5rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;white-space:nowrap}
+@keyframes mao-studio-intro-brand{
+  0%{opacity:0;transform:translateY(8px) scale(.96)}
+  24%,66%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-4px) scale(1.025)}
+}
+@keyframes mao-studio-intro-curtain{
+  0%,70%{opacity:1;visibility:visible}
+  99%{opacity:0;visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+@media(prefers-reduced-motion:reduce){html.mao-studio-intro-active .mao-studio-intro{display:none!important}}
