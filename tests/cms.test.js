@@ -119,7 +119,7 @@ test('real sidebar and New update clicks open editor; deep link opens after load
       fetch: async () => ({ ok: true, json: async () => ({ posts: [], email: 'admin@example.org' }) })
     };
     runInNewContext(script, context);
-    for (let i = 0; i < 12 && element('admin-workspace').hidden; i++) await new Promise((resolve) => setImmediate(resolve));
+    for (let i = 0; i < 12 && !element('admin-status').hidden; i++) await new Promise((resolve) => setImmediate(resolve));
     assert.equal(element('admin-workspace').hidden, false);
     assert.equal(element('admin-status').textContent, '');
     assert.equal(element('admin-status').hidden, true);
