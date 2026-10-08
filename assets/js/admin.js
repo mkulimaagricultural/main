@@ -177,7 +177,14 @@
     } catch (error) { message(error.message || 'Could not save update.', 'error'); }
     finally { submit.disabled = false; }
   });
-  document.getElementById('new-post').addEventListener('click', () => { resetForm(); panel.hidden = false; panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  function openNewPost(event) {
+    event?.preventDefault();
+    resetForm();
+    panel.hidden = false;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.getElementById('new-post').addEventListener('click', openNewPost);
+  document.getElementById('write-update-link').addEventListener('click', openNewPost);
   document.getElementById('cancel-edit').addEventListener('click', resetForm);
   document.querySelectorAll('[data-filter]').forEach((button) => button.addEventListener('click', () => {
     filter = button.dataset.filter;
