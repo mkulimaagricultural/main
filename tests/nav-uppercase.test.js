@@ -20,7 +20,7 @@ test('all six public pages render Contact as a regular navigation link and prese
     for (const section of ['navAbout', 'navFocus', 'navUpdates', 'navContact', 'navDonate']) {
       assert.ok(html.includes('data-i18n="' + section + '"'), section + ' must remain bilingual in ' + path);
     }
-    assert.ok(html.includes('mao.css?v=nav-uppercase-1'), 'updated CSS not loaded by ' + path);
+    assert.ok(html.includes('mao.css?v=' + (path === 'index.html' ? 'home-intro-1' : 'nav-uppercase-1')), 'updated CSS not loaded by ' + path);
   }
 });
 
