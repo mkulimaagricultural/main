@@ -163,7 +163,7 @@
         if (!item.file) continue;
         message(`Uploading media ${i + 1} of ${attachments.length}…`);
         const result = await api('/admin/api/uploads', {
-          method: 'POST', headers: { 'Content-Type': item.file.type }, body: item.file
+          method: 'POST', headers: { 'Content-Type': item.file.type, 'X-File-Size': String(item.file.size) }, body: item.file
         });
         item.url = result.media_url;
         item.file = null;
