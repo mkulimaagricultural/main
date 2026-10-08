@@ -97,6 +97,7 @@
     if (menuButton) {
       menuButton.setAttribute('aria-label', copy[menuButton.getAttribute('aria-expanded') === 'true' ? 'closeMenu' : 'openMenu']);
     }
+    window.dispatchEvent(new CustomEvent('mao:language-change', { detail: { language: locale } }));
   }
 
   let savedLanguage = 'en';
@@ -116,4 +117,3 @@
     });
   }
 })();
-

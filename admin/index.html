@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>MAo Updates CMS</title>
+  <link rel="icon" type="image/png" href="../assets/img/mao-logo.png">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <a href="../" aria-label="MAo website"><img src="../assets/img/mao-logo.png" width="48" height="48" alt=""><span>MAo</span></a>
+    <span>Updates CMS</span>
+  </header>
+  <main class="admin-shell">
+    <div class="admin-intro">
+      <div><p class="eyebrow">MAo administration</p><h1>News and updates</h1><p>Manage English and Kiswahili versions of each post.</p></div>
+      <a class="website-link" href="../#updates">View website ↗</a>
+    </div>
+    <p id="admin-status" class="admin-status" role="status">Checking access…</p>
+    <div id="admin-workspace" class="admin-workspace" hidden>
+      <section class="admin-panel" aria-labelledby="posts-heading">
+        <div class="admin-panel__heading"><h2 id="posts-heading">Posts</h2><button id="new-post" type="button" hidden>New post</button></div>
+        <div id="post-list" class="post-list"></div>
+      </section>
+      <section id="editor-panel" class="admin-panel" aria-labelledby="editor-heading" hidden>
+        <h2 id="editor-heading">Edit post</h2>
+        <form id="post-form">
+          <input type="hidden" name="id">
+          <input type="hidden" name="image_url">
+          <label>English title <input name="title_en" maxlength="160" required></label>
+          <label>Kichwa cha Kiswahili <input name="title_sw" maxlength="160" required></label>
+          <label>English text <textarea name="body_en" rows="6" maxlength="10000" required></textarea></label>
+          <label>Maelezo ya Kiswahili <textarea name="body_sw" rows="6" maxlength="10000" required></textarea></label>
+          <label>Image (JPEG, PNG or WebP, up to 5 MB) <input name="image" type="file" accept="image/jpeg,image/png,image/webp"></label>
+          <p id="current-image" class="image-note"></p>
+          <label>Status <select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+          <div class="form-actions"><button type="submit">Save post</button><button id="cancel-edit" type="button" class="secondary">Cancel</button></div>
+        </form>
+      </section>
+    </div>
+  </main>
+  <script src="../assets/js/admin.js" defer></script>
+</body>
+</html>
