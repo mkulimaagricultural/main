@@ -48,71 +48,84 @@ export async function onRequestPost({ request, env, data }) {
     } catch { return json({ error: 'Could not upload image.' }, 500); }
   }
 
-  // Upload raw files as streams: large videos must never be buffered in Worker memory.
+  // Use a fixed-length stream for R2: dynamically generated ReadableStreams are
+  // not accepted by the R2 binding, even when their bytes are otherwise valid.
   if (!request.body || !['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm'].includes(contentType)) {
     return json({ error: 'Upload a JPEG, PNG, WebP, MP4 or WebM file.' }, 400);
   }
+  const claimedSize = request.headers.get('X-File-Size') || declaredLength;
+  if (!claimedSize || !/^\d+$/.test(claimedSize)) {
+    return json({ error: 'Missing file size. Please retry the upload.' }, 411);
+  }
+  const expectedSize = Number(claimedSize);
+  if (!Number.isSafeInteger(expectedSize) || expectedSize <= 0) {
+    return json({ error: 'Invalid file size.' }, 400);
+  }
+  if (declaredLength !== null && expectedSize !== Number(declaredLength)) {
+    return json({ error: 'Upload size does not match the file size.' }, 400);
+  }
+  const max = contentType.startsWith('image/') ? IMAGE_LIMIT : VIDEO_LIMIT;
+  if (expectedSize > max) {
+    return json({ error: contentType.startsWith('image/') ? 'Each image must be 15 MB or smaller.' : 'Video must be 90 MB or smaller.' }, 413);
+  }
   const reader = request.body.getReader();
-  let buffered = [];
+  const prefixChunks = [];
   let prefixLength = 0;
   try {
     while (prefixLength < 512) {
-      const chunk = await reader.read();
-      if (chunk.done) break;
-      buffered.push(chunk.value);
-      prefixLength += chunk.value.byteLength;
-      if (prefixLength > VIDEO_LIMIT) throw new Error('limit');
+      const result = await reader.read();
+      if (result.done) break;
+      prefixChunks.push(result.value);
+      prefixLength += result.value.byteLength;
+      if (prefixLength > expectedSize) break;
     }
     const header = new Uint8Array(Math.min(512, prefixLength));
     let copied = 0;
-    for (const chunk of buffered) {
-      const length = Math.min(chunk.length, header.length - copied);
-      header.set(chunk.subarray(0, length), copied);
-      copied += length;
+    for (const chunk of prefixChunks) {
+      const take = Math.min(chunk.length, header.length - copied);
+      header.set(chunk.subarray(0, take), copied);
+      copied += take;
       if (copied >= header.length) break;
     }
-    const kind = detectedType(header);
-    if (!kind || kind.mime !== contentType) {
+    const type = detectedType(header);
+    if (!type || type.mime !== contentType) {
       await reader.cancel();
       return json({ error: 'File contents do not match the allowed image or video type.' }, 400);
     }
-    const max = kind.type === 'video' ? VIDEO_LIMIT : IMAGE_LIMIT;
-    if (prefixLength > max || bodySize > max) {
+    if (prefixLength > expectedSize) {
       await reader.cancel();
-      return json({ error: kind.type === 'video' ? 'Video must be 90 MB or smaller.' : 'Each image must be 15 MB or smaller.' }, 413);
+      return json({ error: 'Upload size does not match the file size.' }, 400);
     }
-    let index = 0;
-    let total = 0;
-    let exceeded = false;
-    const stream = new ReadableStream({
-      async pull(controller) {
-        const result = index < buffered.length
-          ? { done: false, value: buffered[index++] }
-          : await reader.read();
-        if (result.done) {
-          if (declaredLength !== null && total !== bodySize) controller.error(new Error('Incomplete upload.'));
-          else controller.close();
-          return;
-        }
-        total += result.value.byteLength;
-        if (total > max || (declaredLength !== null && total > bodySize)) {
-          exceeded = true;
-          controller.error(new Error('File exceeds upload limit.'));
-          await reader.cancel();
-          return;
-        }
-        controller.enqueue(result.value);
-      },
-      cancel(reason) { return reader.cancel(reason); }
-    });
-    const key = `${crypto.randomUUID()}.${kind.ext}`;
+    const { readable, writable } = new FixedLengthStream(expectedSize);
+    const writer = writable.getWriter();
+    const key = `${crypto.randomUUID()}.${type.ext}`;
+    const putPromise = env.MEDIA.put(key, readable, { httpMetadata: { contentType: type.mime } });
+    let uploaded = 0;
     try {
-      await env.MEDIA.put(key, stream, { httpMetadata: { contentType: kind.mime } });
-    } catch {
-      return json({ error: exceeded ? 'File exceeds upload size limit.' : 'Could not upload media. Please retry.' }, exceeded ? 413 : 500);
+      const push = async (chunk) => {
+        uploaded += chunk.byteLength;
+        if (uploaded > expectedSize || uploaded > max) throw new Error('File exceeds declared upload size.');
+        await writer.write(chunk);
+      };
+      for (const chunk of prefixChunks) await push(chunk);
+      while (true) {
+        const result = await reader.read();
+        if (result.done) break;
+        await push(result.value);
+      }
+      if (uploaded !== expectedSize) throw new Error('Incomplete media upload.');
+      await writer.close();
+      await putPromise;
+    } catch (error) {
+      await reader.cancel().catch(() => {});
+      await writer.abort(error).catch(() => {});
+      await putPromise.catch(() => {});
+      return json({ error: error.message === 'File exceeds declared upload size.' || error.message === 'Incomplete media upload.'
+        ? 'Upload size does not match the file size.'
+        : 'Could not upload media. Please retry.' }, 400);
     }
     const url = `/api/media/${key}`;
-    return json({ media_url: url, media_type: kind.type, ...(kind.type === 'image' ? { image_url: url } : {}) }, 201);
+    return json({ media_url: url, media_type: type.type, ...(type.type === 'image' ? { image_url: url } : {}) }, 201);
   } catch {
     await reader.cancel().catch(() => {});
     return json({ error: 'Could not read media upload.' }, 400);
