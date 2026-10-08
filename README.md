@@ -8,7 +8,7 @@ Typography: maandishi yote yasiyo headings hutumia Inter, ikiwa ni pamoja na leb
 
 Heading, maelezo na vitufe vya sehemu ya mwanzo vinaingia kwa mpangilio mfupi vinapoonekana. Animation inacheza mara moja tu, na inazimwa kwa kifaa kilichoweka `prefers-reduced-motion: reduce`.
 
-Maudhui ya shirika yametolewa kwenye *MAO KATIBA 2.docx*, toleo la kwanza la 2024. Hakuna takwimu za athari, matukio, majina ya viongozi, taarifa za mawasiliano, au miradi iliyotekelezwa iliyobuniwa. Sehemu ya updates inaonyesha hali tupu hadi taarifa halisi zichapishwe.
+Maudhui ya shirika yametolewa kwenye *MAO KATIBA 2.docx*, toleo la kwanza la 2024. Hakuna takwimu za athari au miradi iliyotekelezwa iliyobuniwa. Update ya kwanza ya kikao cha waanzilishi imetolewa na MAo pamoja na picha yake; tarehe haijaongezwa kwa sababu haikutolewa. Hii ni post ya static kwenye preview na itahamishiwa CMS baada ya kujengwa.
 
 ## Asili ya muonekano
 
@@ -19,6 +19,8 @@ CSS na JavaScript vya msingi vimetoka kwenye [Charitize NGO HTML template](https
 `assets/img/hero-farm.jpg` ni picha ya mfano iliyotengenezwa kwa imagegen, si picha ya shamba au mradi wa MAo. Prompt: “A realistic, dignified high-resolution landscape of fertile smallholder farmland near Mbeya, Tanzania at warm early morning light. Neat rows of healthy crops, distant green hills, earth paths, a subtle glimpse of irrigation and sustainable farming. No identifiable people, no logos, no text, no buildings that imply a specific NGO project. Wide horizontal framing with darker open space on the left for overlaid heading. Authentic East African highland landscape, natural colors, editorial photography.”
 
 `assets/img/mao-logo.png` imetokana na logo iliyotumwa na MAo; background yake imeondolewa kwa imagegen na imehifadhiwa kama PNG yenye transparency. Prompt ya uhariri: “Remove the off-white rectangular backdrop only. Keep exactly the same emblem design, including leaves, sun, hand, fields, colored arcs, shapes and colors. Produce a clean transparent PNG with alpha channel and no text, shadow, border or added objects.”
+
+`assets/img/founders-meeting.jpg` ni picha iliyotumwa na MAo kwa update ya kwanza kuhusu kikao cha waanzilishi. Haijabadilishwa. Maelezo ya English yametafsiriwa kutoka maelezo ya Kiswahili yaliyotolewa na MAo.
 
 Icons za mitandao zimetoka [Bootstrap Icons](https://github.com/twbs/icons), chini ya leseni ya MIT. Links za akaunti zimewekwa kama zilivyotumwa na MAo; upatikanaji wa kila ukurasa wa mitandao haukuweza kuthibitishwa moja kwa moja.
 

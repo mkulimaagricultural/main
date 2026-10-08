@@ -26,8 +26,10 @@
       missionLabel: 'Our mission', missionTitle: 'Knowledge and opportunity',
       missionBody: 'Provide training, resources, and employment opportunities for women and young people to build economic independence through valuable, sustainable agriculture.',
       updatesLabel: 'News and updates', updatesTitle: 'Updates from MAo',
-      updatesIntro: 'We will publish verified information about activities, training, and opportunities here.',
-      updatesEmptyTitle: 'Updates are coming', updatesEmptyBody: 'No update has been published yet. This section will connect to a CMS so the MAo team can publish posts directly.',
+      updatesIntro: 'News and activities shared by the MAo team.',
+      updatesFirstTag: 'MAo update', updatesFirstTitle: 'Founders discuss climate-resilient agriculture',
+      updatesFirstBody: "In an internal meeting, MAo's founders discussed ways to support communities through climate-resilient agriculture and responses to climate change.",
+      updatesFirstAlt: 'MAo founders seated around a table during an internal meeting',
       contactLabel: 'Contact us', contactTitle: "Let's advance agriculture together",
       contactBody: 'Reach MAo using the official email and postal address below.',
       contactEmailLabel: 'Email', contactPostLabel: 'Postal address',
@@ -57,8 +59,10 @@
       missionLabel: 'Dhamira yetu', missionTitle: 'Maarifa na fursa',
       missionBody: 'Kutoa mafunzo, rasilimali na fursa za ajira kwa wanawake na vijana ili waweze kujitegemea kiuchumi kupitia kilimo chenye thamani na endelevu.',
       updatesLabel: 'Taarifa na habari', updatesTitle: 'Updates za MAo',
-      updatesIntro: 'Hapa tutachapisha taarifa za shughuli, mafunzo na fursa mara zitakapothibitishwa na shirika.',
-      updatesEmptyTitle: 'Taarifa zinakuja', updatesEmptyBody: 'Hakuna update iliyochapishwa bado. Sehemu hii itaunganishwa na CMS ili timu ya MAo iweze kupost yenyewe.',
+      updatesIntro: 'Habari na shughuli zinazoshirikishwa na timu ya MAo.',
+      updatesFirstTag: 'Taarifa ya MAo', updatesFirstTitle: 'Waanzilishi wajadili kilimo himilivu',
+      updatesFirstBody: 'Katika kikao cha ndani, waanzilishi wa MAo walijadili namna ya kuwasaidia wananchi kupitia kilimo himilivu na kukabiliana na mabadiliko ya tabianchi.',
+      updatesFirstAlt: 'Waanzilishi wa MAo wakiwa wameketi kuzunguka meza katika kikao cha ndani',
       contactLabel: 'Wasiliana nasi', contactTitle: 'Tushirikiane kuendeleza kilimo',
       contactBody: 'Wasiliana na MAo kupitia barua pepe rasmi na anuani ya posta hapa chini.',
       contactEmailLabel: 'Barua pepe', contactPostLabel: 'Sanduku la posta',
@@ -85,6 +89,10 @@
     document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
       const value = copy[element.dataset.i18nAria];
       if (value !== undefined) element.setAttribute('aria-label', value);
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach((element) => {
+      const value = copy[element.dataset.i18nAlt];
+      if (value !== undefined) element.setAttribute('alt', value);
     });
     if (menuButton) {
       menuButton.setAttribute('aria-label', copy[menuButton.getAttribute('aria-expanded') === 'true' ? 'closeMenu' : 'openMenu']);
