@@ -67,4 +67,17 @@ test('admin page and API are confined to the protected hostname', async () => {
   assert.deepEqual(context.data.admin, { role: 'admin', email: 'second@example.org' });
 });
 
+
+test('sidebar Write an update link opens the same editor as New update', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const page = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
+  const script = await readFile(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
+  assert.match(page, /id="write-update-link"\s+href="#editor-heading"/);
+  assert.match(script, /function openNewPost\(event\)\s*\{/);
+  assert.match(script, /event\?\.preventDefault\(\)/);
+  assert.match(script, /panel\.hidden = false;/);
+  assert.match(script, /getElementById\('new-post'\)\.addEventListener\('click', openNewPost\)/);
+  assert.match(script, /getElementById\('write-update-link'\)\.addEventListener\('click', openNewPost\)/);
+});
+
 test.after(() => { globalThis.fetch = originalFetch; });
