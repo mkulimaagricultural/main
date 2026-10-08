@@ -14,6 +14,10 @@ CSS na JavaScript vya msingi vimetoka kwenye [Charitize NGO HTML template](https
 
 `assets/img/hero-farm.jpg` ni picha ya mfano iliyotengenezwa kwa imagegen, si picha ya shamba au mradi wa MAo. Prompt: “A realistic, dignified high-resolution landscape of fertile smallholder farmland near Mbeya, Tanzania at warm early morning light. Neat rows of healthy crops, distant green hills, earth paths, a subtle glimpse of irrigation and sustainable farming. No identifiable people, no logos, no text, no buildings that imply a specific NGO project. Wide horizontal framing with darker open space on the left for overlaid heading. Authentic East African highland landscape, natural colors, editorial photography.”
 
+`assets/img/mao-logo.png` imetokana na logo iliyotumwa na MAo; background yake imeondolewa kwa imagegen na imehifadhiwa kama PNG yenye transparency. Prompt ya uhariri: “Remove the off-white rectangular backdrop only. Keep exactly the same emblem design, including leaves, sun, hand, fields, colored arcs, shapes and colors. Produce a clean transparent PNG with alpha channel and no text, shadow, border or added objects.”
+
+Icons za mitandao zimetoka [Bootstrap Icons](https://github.com/twbs/icons), chini ya leseni ya MIT. Links za akaunti zimewekwa kama zilivyotumwa na MAo; upatikanaji wa kila ukurasa wa mitandao haukuweza kuthibitishwa moja kwa moja.
+
 ## Kinachofuata
 
 Baada ya kuthibitisha mwonekano huu, jenga CMS ya updates yenye login na uhifadhi, kisha unganisha Cloudflare Pages na `mkulimaagricultural.org`. Kwa static preview hii, Cloudflare Pages inaweza kutumia branch `main`, build command tupu, na output directory `/`. Barua pepe, simu, picha halisi, na taarifa za miradi ziongezwe baada ya MAo kuzithibitisha.

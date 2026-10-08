@@ -30,7 +30,7 @@
       updatesEmptyTitle: 'Updates are coming', updatesEmptyBody: 'No update has been published yet. This section will connect to a CMS so the MAo team can publish posts directly.',
       contactLabel: 'Contact us', contactTitle: "Let's advance agriculture together",
       contactBody: 'The MAo constitution places its head office in Uyole, Mbeya, Tanzania. An official email address and phone number will be added after the organization confirms them.',
-      contactLocation: 'Uyole · Mbeya District · Tanzania', footerPreview: 'Website preview · 2026'
+      contactLocation: 'Uyole · Mbeya District · Tanzania', socialMedia: 'Social media', footerRights: 'All rights reserved.'
     },
     sw: {
       metaDescription: 'Mkulima Agricultural Organization (MAo) inalenga kuwawezesha wanawake na vijana kupitia kilimo chenye tija na endelevu.',
@@ -60,12 +60,14 @@
       updatesEmptyTitle: 'Taarifa zinakuja', updatesEmptyBody: 'Hakuna update iliyochapishwa bado. Sehemu hii itaunganishwa na CMS ili timu ya MAo iweze kupost yenyewe.',
       contactLabel: 'Wasiliana nasi', contactTitle: 'Tushirikiane kuendeleza kilimo',
       contactBody: 'MAo imeainisha ofisi kuu Uyole, Mbeya, Tanzania. Barua pepe na namba rasmi zitaongezwa baada ya kuthibitishwa na shirika.',
-      contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', footerPreview: 'Muundo wa awali wa tovuti · 2026'
+      contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', socialMedia: 'Mitandao ya kijamii', footerRights: 'Haki zote zimehifadhiwa.'
     }
   };
 
   const picker = document.getElementById('language-select');
   const menuButton = document.querySelector('.nav__toggle');
+  const copyrightYear = document.getElementById('copyright-year');
+  if (copyrightYear) copyrightYear.textContent = String(new Date().getFullYear());
   if (!picker) return;
 
   function applyLanguage(language) {
