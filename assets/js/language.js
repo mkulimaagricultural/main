@@ -33,7 +33,21 @@
       contactLabel: 'Contact us', contactTitle: "Let's advance agriculture together",
       contactBody: 'Reach MAo using the official email and postal address below.',
       contactEmailLabel: 'Email', contactPostLabel: 'Postal address',
-      contactLocation: 'Uyole · Mbeya District · Tanzania', socialMedia: 'Social media', footerFollow: 'Follow Us', footerRights: 'All rights reserved.'
+      contactLocation: 'Uyole · Mbeya District · Tanzania', socialMedia: 'Social media', footerFollow: 'Follow Us', footerRights: 'All rights reserved.',
+      homeLabel: 'Home', aboutPageTitle: 'About us | MAo', focusPageTitle: 'Our focus | MAo', updatesPageTitle: 'Updates | MAo', contactPageTitle: 'Contact | MAo',
+      aboutStoryTitle: 'Who we are', aboutPrinciplesTitle: 'What guides us', focusAreasTitle: 'Our six focus areas',
+      latestUpdatesTitle: 'Latest updates', contactDetailsTitle: 'Ways to reach us',
+      aboutPageMeta: 'Learn about Mkulima Agricultural Organization, its mission, vision and roots in Mbeya, Tanzania.',
+      focusPageMeta: 'Explore the goals of Mkulima Agricultural Organization in training, sustainable farming, value addition and markets.',
+      updatesPageMeta: 'Read news and updates shared by Mkulima Agricultural Organization in English and Kiswahili.',
+      contactPageMeta: 'Contact Mkulima Agricultural Organization in Uyole, Mbeya, Tanzania.',
+      aboutPageLead: 'Rooted in Mbeya, MAo is working toward a future where women and young people can build livelihoods through sustainable agriculture.',
+      aboutPageStory: 'Our constitution describes the challenges we want to address and the communities we intend to serve. As our work grows, we will share verified activities and results here.',
+      focusPageLead: 'Our constitution sets out six connected areas of work. These are organizational goals, and will be updated with verified project information as it becomes available.',
+      updatesPageLead: 'Stories and activities shared by the MAo team. Each update is available in English and Kiswahili.',
+      contactPageLead: 'Get in touch through our official email or postal address. We welcome conversations about agriculture, learning and partnership.',
+      readUpdate: 'Read update', emailUs: 'Email MAo', visitWebsite: 'Visit our website', constitutionNote: 'Our organizational goals are described in the first edition of the MAo constitution (2024).',
+      contactSocialTitle: 'Connect with MAo', contactSocialBody: 'Follow our channels for news and updates.', noPhoneNote: 'Please use the official email for enquiries.'
     },
     sw: {
       metaDescription: 'Mkulima Agricultural Organization (MAo) inalenga kuwawezesha wanawake na vijana kupitia kilimo chenye tija na endelevu.',
@@ -66,7 +80,21 @@
       contactLabel: 'Wasiliana nasi', contactTitle: 'Tushirikiane kuendeleza kilimo',
       contactBody: 'Wasiliana na MAo kupitia barua pepe rasmi na anuani ya posta hapa chini.',
       contactEmailLabel: 'Barua pepe', contactPostLabel: 'Sanduku la posta',
-      contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', socialMedia: 'Mitandao ya kijamii', footerFollow: 'Tufuatilie', footerRights: 'Haki zote zimehifadhiwa.'
+      contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', socialMedia: 'Mitandao ya kijamii', footerFollow: 'Tufuatilie', footerRights: 'Haki zote zimehifadhiwa.',
+      homeLabel: 'Mwanzo', aboutPageTitle: 'Kuhusu sisi | MAo', focusPageTitle: 'Tunacholenga | MAo', updatesPageTitle: 'Taarifa | MAo', contactPageTitle: 'Wasiliana nasi | MAo',
+      aboutStoryTitle: 'Sisi ni nani', aboutPrinciplesTitle: 'Misingi inayotuongoza', focusAreasTitle: 'Maeneo yetu sita ya kazi',
+      latestUpdatesTitle: 'Taarifa za hivi karibuni', contactDetailsTitle: 'Njia za kuwasiliana nasi',
+      aboutPageMeta: 'Fahamu Mkulima Agricultural Organization, dhamira, dira na asili yake Mbeya, Tanzania.',
+      focusPageMeta: 'Fahamu malengo ya MAo kuhusu mafunzo, kilimo endelevu, uongezaji wa thamani na masoko.',
+      updatesPageMeta: 'Soma habari na taarifa za Mkulima Agricultural Organization kwa Kiingereza na Kiswahili.',
+      contactPageMeta: 'Wasiliana na Mkulima Agricultural Organization iliyopo Uyole, Mbeya, Tanzania.',
+      aboutPageLead: 'MAo yenye makao yake Mbeya inalenga kujenga mustakabali ambapo wanawake na vijana wanaweza kujipatia riziki kupitia kilimo endelevu.',
+      aboutPageStory: 'Katiba yetu inaeleza changamoto tunazotaka kushughulikia na jamii tunazokusudia kuzihudumia. Kadiri shughuli zinavyoendelea, tutashiriki taarifa na matokeo yaliyothibitishwa hapa.',
+      focusPageLead: 'Katiba yetu inaainisha maeneo sita yanayohusiana. Haya ni malengo ya shirika, na tutayaongeza taarifa za miradi iliyothibitishwa zitakapopatikana.',
+      updatesPageLead: 'Habari na shughuli zinazoshirikishwa na timu ya MAo. Kila taarifa inapatikana kwa Kiingereza na Kiswahili.',
+      contactPageLead: 'Wasiliana nasi kupitia barua pepe rasmi au anuani ya posta. Tunakaribisha mazungumzo kuhusu kilimo, elimu na ushirikiano.',
+      readUpdate: 'Soma taarifa', emailUs: 'Tuma barua pepe', visitWebsite: 'Tembelea tovuti', constitutionNote: 'Malengo ya shirika yameainishwa katika toleo la kwanza la Katiba ya MAo (2024).',
+      contactSocialTitle: 'Ungana na MAo', contactSocialBody: 'Tufuatilie kwenye mitandao kwa habari na taarifa.', noPhoneNote: 'Tumia barua pepe rasmi kwa maulizo.'
     }
   };
 
@@ -81,7 +109,10 @@
     const copy = messages[locale];
     document.documentElement.lang = locale;
     picker.value = locale;
-    document.querySelector('meta[name="description"]').content = copy.metaDescription;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.content = copy[meta.dataset.i18nMeta] || copy.metaDescription;
+    const pageTitle = document.querySelector('title[data-i18n-title]');
+    if (pageTitle) pageTitle.textContent = copy[pageTitle.dataset.i18nTitle] || pageTitle.textContent;
     document.querySelectorAll('[data-i18n]').forEach((element) => {
       const value = copy[element.dataset.i18n];
       if (value !== undefined) element.textContent = value;
