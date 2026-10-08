@@ -154,7 +154,7 @@ test('CMS shows alerts only when useful and hides idle-ready status without remo
 });
 
 
-test('MAo Studio sidebar restores emblem and uses Neue Haas light MAo plus bold Studio', async () => {
+test('MAo Studio keeps emblem and uses Libre Caslon regular MAo plus bold Studio', async () => {
   const { readFile } = await import('node:fs/promises');
   const html = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
   const css = await readFile(new URL('../assets/css/admin.css', import.meta.url), 'utf8');
@@ -165,16 +165,16 @@ test('MAo Studio sidebar restores emblem and uses Neue Haas light MAo plus bold 
   assert.ok(brand[1].includes('<span class="brand-wordmark"><span class="brand-wordmark__mao">MAo</span><strong class="brand-wordmark__studio">Studio</strong></span>'));
   assert.ok(!brand[1].includes('<small'));
   assert.ok(!brand[1].includes('Mkulima Agricultural Organization'));
-  assert.ok(html.includes('href="/assets/css/admin.css?v=studio-logo-haas-2"'));
+  assert.ok(html.includes('href="/assets/css/admin.css?v=studio-libre-caslon-1"'));
   assert.ok(html.includes('id="write-update-link"'));
   assert.ok(html.includes('id="new-post"'));
   assert.ok(html.includes('<link rel="icon" href="/assets/img/mao-logo.png">'));
-  assert.ok(css.includes("@import url('https://fonts.cdnfonts.com/css/neue-haas-grotesk-display-pro')"));
-  assert.ok(css.includes("font-family:'Neue Haas Grotesk Display Pro',Inter,Arial,sans-serif"));
-  assert.ok(css.includes('.brand-wordmark__mao{font-weight:300}'));
+  assert.ok(css.includes("@import url('https://fonts.googleapis.com/css2?family=Libre+Caslon+Condensed:wght@400;700&display=swap')"));
+  assert.ok(css.includes("font-family:'Libre Caslon Condensed',Georgia,serif"));
+  assert.ok(css.includes('.brand-wordmark__mao{font-weight:400}'));
   assert.ok(css.includes('.brand-wordmark__studio{font-weight:700}'));
   assert.ok(css.includes('.brand img{width:42px;height:42px;object-fit:contain;flex:none}'));
-  assert.ok(headers.includes("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.cdnfonts.com"));
+  assert.ok(headers.includes("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"));
 });
 
 test.after(() => { globalThis.fetch = originalFetch; });
