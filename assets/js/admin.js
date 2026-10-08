@@ -192,5 +192,12 @@
     renderList();
   }));
   renderMedia();
-  load().catch((error) => message(`${error.message} Check Cloudflare Access, Pages bindings and the 0002 migration.`, 'error'));
+  load().then(() => {
+    // Deep link also works if an older cached script missed the sidebar click:
+    // a full navigation to /admin/?compose=1 opens the editor after data loads.
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('compose') || ['#editor-panel', '#editor-heading'].includes(window.location.hash)) {
+      openNewPost();
+    }
+  }).catch((error) => message(`${error.message} Check Cloudflare Access, Pages bindings and the 0002 migration.`, 'error'));
 })();
