@@ -20,5 +20,5 @@ Icons za mitandao zimetoka [Bootstrap Icons](https://github.com/twbs/icons), chi
 
 ## Kinachofuata
 
-Baada ya kuthibitisha mwonekano huu, jenga CMS ya updates yenye login na uhifadhi, kisha unganisha Cloudflare Pages na `mkulimaagricultural.org`. Kwa static preview hii, Cloudflare Pages inaweza kutumia branch `main`, build command tupu, na output directory `/`. Barua pepe, simu, picha halisi, na taarifa za miradi ziongezwe baada ya MAo kuzithibitisha.
+Baada ya kuthibitisha mwonekano huu, jenga CMS ya updates yenye login na uhifadhi, kisha unganisha Cloudflare Pages na `mkulimaagricultural.org`. Kwa static preview hii, Cloudflare Pages inaweza kutumia branch `main`, build command tupu, na output directory `/`. Barua pepe rasmi na anuani ya posta zimetolewa na MAo. Namba binafsi za viongozi, picha halisi, na taarifa za miradi ziongezwe baada ya MAo kuthibitisha zichapishwe hadharani.
 

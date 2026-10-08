@@ -29,7 +29,8 @@
       updatesIntro: 'We will publish verified information about activities, training, and opportunities here.',
       updatesEmptyTitle: 'Updates are coming', updatesEmptyBody: 'No update has been published yet. This section will connect to a CMS so the MAo team can publish posts directly.',
       contactLabel: 'Contact us', contactTitle: "Let's advance agriculture together",
-      contactBody: 'The MAo constitution places its head office in Uyole, Mbeya, Tanzania. An official email address and phone number will be added after the organization confirms them.',
+      contactBody: 'Reach MAo using the official email and postal address below.',
+      contactEmailLabel: 'Email', contactPostLabel: 'Postal address',
       contactLocation: 'Uyole · Mbeya District · Tanzania', socialMedia: 'Social media', footerRights: 'All rights reserved.'
     },
     sw: {
@@ -59,7 +60,8 @@
       updatesIntro: 'Hapa tutachapisha taarifa za shughuli, mafunzo na fursa mara zitakapothibitishwa na shirika.',
       updatesEmptyTitle: 'Taarifa zinakuja', updatesEmptyBody: 'Hakuna update iliyochapishwa bado. Sehemu hii itaunganishwa na CMS ili timu ya MAo iweze kupost yenyewe.',
       contactLabel: 'Wasiliana nasi', contactTitle: 'Tushirikiane kuendeleza kilimo',
-      contactBody: 'MAo imeainisha ofisi kuu Uyole, Mbeya, Tanzania. Barua pepe na namba rasmi zitaongezwa baada ya kuthibitishwa na shirika.',
+      contactBody: 'Wasiliana na MAo kupitia barua pepe rasmi na anuani ya posta hapa chini.',
+      contactEmailLabel: 'Barua pepe', contactPostLabel: 'Sanduku la posta',
       contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', socialMedia: 'Mitandao ya kijamii', footerRights: 'Haki zote zimehifadhiwa.'
     }
   };
