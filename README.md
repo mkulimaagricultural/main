@@ -1,6 +1,6 @@
 # MAo website and updates CMS
 
-Fungua `index.html` kwenye browser kuona ukurasa wa mwanzo wa Mkulima Agricultural Organization (MAo). Tovuti hii bado haijaunganishwa na Cloudflare Pages au domain. Msimbo wa CMS umeandaliwa, lakini login, database na image storage hazitafanya kazi mpaka huduma za Cloudflare zilizounganishwa hapa chini ziwekwe.
+Tovuti ya Mkulima Agricultural Organization (MAo) iko kwenye Cloudflare Pages, ikichapishwa kutoka `mkulimaagricultural/main` kwenda `mkulimaagricultural.org` na `www.mkulimaagricultural.org`. D1 `mao-updates` na R2 `mao-media` tayari zimefungwa kwenye Pages kwa majina `DB` na `MEDIA`. CMS ya admin inahitaji hatua za Access na migration zilizoelezwa hapa chini.
 
 Lugha ya mwanzo ni English. Kichagua lugha kwenye navigation hubadilisha maudhui kati ya English na Kiswahili. Chaguo la mtumiaji huhifadhiwa kwenye browser yake; mtumiaji mpya huona English.
 
@@ -12,23 +12,26 @@ Maudhui ya shirika yametolewa kwenye *MAO KATIBA 2.docx*, toleo la kwanza la 202
 
 ## CMS ya updates
 
-Dashboard iko `/admin/`. Kila post ina kichwa na maelezo ya English/Kiswahili, picha ya hiari, na hali ya draft au published. Admin wote wawili wana ruhusa sawa ya kuona, kuandika, kubadilisha, kupakia picha na kuchapisha posts. Barua pepe zao huwekwa katika Cloudflare environment variable, si kwenye repo hii ya umma.
+Dashboard iko `https://admin.mkulimaagricultural.org/admin/`; root ya subdomain hiyo inaelekeza huko. Public domain ikifunguliwa kwa `/admin/` inaelekezwa kwenye admin subdomain; admin API kwenye public domain inakataliwa. Dashboard hutumia Tabler (MIT), na ina orodha ya posts, tarehe, draft/published, views za kufungua ukurasa wa post, kubadili picha, Trash na Restore. Views ni makadirio ya ufunguzi wa ukurasa, yanaweza kujumuisha bots na si idadi ya watu wa kipekee. Kila post ina English na Kiswahili; published huonekana moja kwa moja kwenye public website. Admin wawili wana uwezo sawa. Barua pepe zao huwekwa kwenye Cloudflare environment variable, si kwenye repo hii ya umma.
 
-Endpoints za admin zinaangalia JWT iliyosainiwa na Cloudflare Access, audience, muda wa token, na barua pepe iliyoorodheshwa kwenye role husika. Cloudflare Access app pia lazima ilinde njia `/admin/*`. Hakuna password inayohifadhiwa kwenye tovuti. Upatikanaji wa picha ni kupitia R2; data za posts ni kupitia D1.
+Endpoints za admin zinaangalia hostname na JWT iliyosainiwa na Cloudflare Access, audience, muda wa token, na barua pepe zilizoidhinishwa. Cloudflare Access app lazima ilinde hostname `admin.mkulimaagricultural.org` nzima. Hakuna password inayohifadhiwa kwenye tovuti. Picha ziko R2 na data za posts ziko D1.
 
 ## Kuunganisha Cloudflare Pages
 
-1. Unganisha GitHub repo `mkulimaagricultural/main` na Cloudflare Pages. Production branch: `main`; build command: `npm run build`; output directory: `dist`. Build huchapisha `index.html`, `admin/`, `assets/`, na `_routes.json` pekee. `functions/` zinabundle kama Pages Functions. `_routes.json` huita Functions kwa `/api/*` na `/admin/api/*` tu.
-2. Tengeneza D1 database, kwa mfano `mao-updates`, na R2 bucket, kwa mfano `mao-media`. Ongeza bindings kwa Pages project: D1 variable `DB`, R2 variable `MEDIA`. Tumia `migrations/0001_posts.sql` mara moja kwenye D1 database. Hii inaongeza post ya kwanza iliyotolewa na MAo.
-3. Katika Cloudflare Zero Trust, tengeneza Access self-hosted application kwa hostname ya tovuti na path `/admin/*`. Ruhusu barua pepe mbili zilizoidhinishwa na MAo kutumia login ya email OTP au identity provider inayofaa. Hakikisha protection inatumika pia kwenye preview domains kama utazitumia.
-4. Katika Pages project environment variables, weka `ACCESS_TEAM_DOMAIN` (mfano `https://team-name.cloudflareaccess.com`), `ACCESS_AUD` (Application Audience tag ya Access app), na `MAO_ADMIN_EMAILS`. Weka email zote mbili za admin zilizotolewa na MAo kwenye `MAO_ADMIN_EMAILS`, zikitenganishwa kwa koma. Kwa usalama, ziweke kama secret ikiwa dashboard inatoa chaguo hilo. Weka values kwenye production na preview environments pale zinapohitajika.
-5. Baada ya bindings na variables kuwekwa, redeploy Pages project, kisha pima akaunti zote mbili kwenye `/admin/`: kila mmoja aone editor na aweze kuchapisha. Pima public updates katika English na Kiswahili. Unganisha custom domain `mkulimaagricultural.org` baada ya QA.
+1. GitHub `mkulimaagricultural/main` iko kwenye Cloudflare Pages project `mkulimaagricultural`, production branch `main`, build `npm run build`, output `dist`. `functions/` hubundle kama Pages Functions. Build huweka Tabler CSS ndani ya `dist/assets/vendor/tabler/`; hakuna Tabler CDN inayohitajika.
+2. D1 `mao-updates` tayari ina `migrations/0001_posts.sql` na post ya kwanza. Endesha `migrations/0002_cms.sql` kwenye D1 Console; ni additive na idempotent. Inaunda `post_meta` kwa views, Trash, na attribution ya admin. Hifadhi taarifa zilizopo; usirudie kuunda D1 au R2.
+3. Katika Pages project `mkulimaagricultural` > Custom domains, ongeza `admin.mkulimaagricultural.org`. Cloudflare itaongeza DNS record inayohitajika kwenye zone yake. Hakikisha status ni Active/SSL enabled.
+4. Katika Cloudflare Zero Trust, tengeneza Access self-hosted application kwa hostname `admin.mkulimaagricultural.org` bila path, ili subdomain nzima ilindwe. Policy iruhusu **tu** `bengodson8@gmail.com` na `drcharlestz@gmail.com`, kwa usawa. Tumia login ya email OTP au identity provider inayofaa. Hakikisha hakuna bypass policy.
+5. Katika Pages production environment variables/secrets, weka `ACCESS_TEAM_DOMAIN` (mfano `https://team-name.cloudflareaccess.com`), `ACCESS_AUD` (Application Audience tag ya Access app), na `MAO_ADMIN_EMAILS=bengodson8@gmail.com,drcharlestz@gmail.com`. Redeploy Pages baada ya mabadiliko ya variables.
+6. Pima login kwa kila admin, kuandika draft, kupublish, kubadili picha, Trash/Restore, na public page ya post. Epuka kupima kwa data bandia kwenye production; tumia post halisi ya MAo au draft.
 
-Kwa local development, `npm test` huendesha majaribio ya JWT na validation; `npm run build` hutengeneza `dist/`. Static preview pekee haiwezi kuthibitisha login au kuhifadhi posts bila Cloudflare bindings.
+Kwa local development, `npm test` huendesha majaribio ya JWT na validation; `npm run build` hutengeneza `dist/`. Static preview haiwezi kuthibitisha login au kuhifadhi posts bila Cloudflare bindings. Public API ina fallback ya kusoma posts zilizopo wakati `0002_cms.sql` haijaendeshwa, ili deployment isikatishe public updates.
 
 ## Asili ya muonekano
 
 CSS na JavaScript vya msingi vimetoka kwenye [Charitize NGO HTML template](https://github.com/uiuxlabz/charity-html-template). README ya mradi huo inaruhusu matumizi binafsi na ya kibiashara, na inasema attribution inathaminiwa lakini si lazima. Muundo na maudhui vimebadilishwa kwa MAo. Kagua masharti ya template tena kabla ya uchapishaji wa mwisho.
+
+Dashboard hutumia [Tabler](https://github.com/tabler/tabler), chini ya leseni ya MIT. Build inakopi Tabler CSS pekee; haiingizi libraries za third party zilizo kwenye distribution yake.
 
 ## Picha
 

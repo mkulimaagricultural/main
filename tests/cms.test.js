@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { generateKeyPairSync, createSign } from 'node:crypto';
 import { getAdminRole, isSameOrigin } from '../lib/auth.js';
 import { validatePost } from '../lib/posts.js';
+import { onRequest as adminMiddleware } from '../functions/admin/_middleware.js';
 
 const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
 const jwk = { ...publicKey.export({ format: 'jwk' }), kid: 'test-key', alg: 'RS256', use: 'sig' };
@@ -49,6 +50,21 @@ test('posts need both languages and a local image path', () => {
   assert.ok(validatePost(good).post);
   assert.ok(validatePost({ ...good, body_sw: '' }).error);
   assert.ok(validatePost({ ...good, image_url: 'https://outside.example/tracker.jpg' }).error);
+});
+
+test('admin page and API are confined to the protected hostname', async () => {
+  const context = { request: new Request('https://mkulimaagricultural.org/admin/api/posts'), env, data: {}, next: () => new Response('unsafe') };
+  const apiResponse = await adminMiddleware(context);
+  assert.equal(apiResponse.status, 403);
+  context.request = new Request('https://mkulimaagricultural.org/admin/');
+  const pageResponse = await adminMiddleware(context);
+  assert.equal(pageResponse.status, 302);
+  assert.equal(pageResponse.headers.get('Location'), 'https://admin.mkulimaagricultural.org/admin/');
+  context.request = new Request('https://admin.mkulimaagricultural.org/admin/api/posts');
+  assert.equal((await adminMiddleware(context)).status, 403);
+  context.request = new Request('https://admin.mkulimaagricultural.org/admin/api/posts', { headers: { 'CF-Access-Jwt-Assertion': token('second@example.org') } });
+  assert.equal((await adminMiddleware(context)).status, 200);
+  assert.deepEqual(context.data.admin, { role: 'admin', email: 'second@example.org' });
 });
 
 test.after(() => { globalThis.fetch = originalFetch; });

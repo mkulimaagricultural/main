@@ -30,7 +30,10 @@
       tag.className = 'mao-update-card__tag';
       tag.textContent = sw ? 'Taarifa ya MAo' : 'MAo update';
       const title = document.createElement('h3');
-      title.textContent = sw ? post.title_sw : post.title_en;
+      const link = document.createElement('a');
+      link.href = `/updates/${encodeURIComponent(post.id)}${sw ? '?lang=sw' : ''}`;
+      link.textContent = sw ? post.title_sw : post.title_en;
+      title.append(link);
       const description = document.createElement('p');
       description.textContent = sw ? post.body_sw : post.body_en;
       body.append(tag, title, description);

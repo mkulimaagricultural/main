@@ -1,46 +1,7 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>MAo Updates CMS</title>
-  <link rel="icon" type="image/png" href="../assets/img/mao-logo.png">
-  <link rel="stylesheet" href="../assets/css/admin.css">
-</head>
-<body>
-  <header class="admin-header">
-    <a href="../" aria-label="MAo website"><img src="../assets/img/mao-logo.png" width="48" height="48" alt=""><span>MAo</span></a>
-    <span>Updates CMS</span>
-  </header>
-  <main class="admin-shell">
-    <div class="admin-intro">
-      <div><p class="eyebrow">MAo administration</p><h1>News and updates</h1><p>Manage English and Kiswahili versions of each post.</p></div>
-      <a class="website-link" href="../#updates">View website ↗</a>
-    </div>
-    <p id="admin-status" class="admin-status" role="status">Checking access…</p>
-    <div id="admin-workspace" class="admin-workspace" hidden>
-      <section class="admin-panel" aria-labelledby="posts-heading">
-        <div class="admin-panel__heading"><h2 id="posts-heading">Posts</h2><button id="new-post" type="button" hidden>New post</button></div>
-        <div id="post-list" class="post-list"></div>
-      </section>
-      <section id="editor-panel" class="admin-panel" aria-labelledby="editor-heading" hidden>
-        <h2 id="editor-heading">Edit post</h2>
-        <form id="post-form">
-          <input type="hidden" name="id">
-          <input type="hidden" name="image_url">
-          <label>English title <input name="title_en" maxlength="160" required></label>
-          <label>Kichwa cha Kiswahili <input name="title_sw" maxlength="160" required></label>
-          <label>English text <textarea name="body_en" rows="6" maxlength="10000" required></textarea></label>
-          <label>Maelezo ya Kiswahili <textarea name="body_sw" rows="6" maxlength="10000" required></textarea></label>
-          <label>Image (JPEG, PNG or WebP, up to 5 MB) <input name="image" type="file" accept="image/jpeg,image/png,image/webp"></label>
-          <p id="current-image" class="image-note"></p>
-          <label>Status <select name="status"><option value="draft">Draft</option><option value="published">Published</option></select></label>
-          <div class="form-actions"><button type="submit">Save post</button><button id="cancel-edit" type="button" class="secondary">Cancel</button></div>
-        </form>
-      </section>
-    </div>
-  </main>
-  <script src="../assets/js/admin.js" defer></script>
-</body>
-</html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>MAo Studio · Updates</title><link rel="icon" href="/assets/img/mao-logo.png"><link rel="stylesheet" href="/assets/vendor/tabler/tabler.min.css"><link rel="stylesheet" href="/assets/css/admin.css"></head>
+<body><div class="layout"><aside class="sidebar"><a class="brand" href="/admin/"><img src="/assets/img/mao-logo.png" width="42" height="42" alt=""><span><strong>MAo Studio</strong><small>Mkulima Agricultural Organization</small></span></a><p class="nav-label">CONTENT</p><a class="nav-link active" href="#posts-heading">Updates <span id="nav-count">0</span></a><a class="nav-link" href="#editor-heading">Write an update</a><a class="nav-link" href="https://mkulimaagricultural.org/#updates" target="_blank" rel="noopener">Public website ↗</a><div class="sidebar-foot">English and Kiswahili publishing<br><span id="admin-email">Secure admin area</span></div></aside>
+<div class="main"><header class="topbar"><span>Content management</span><a href="https://mkulimaagricultural.org/" target="_blank" rel="noopener">View live site ↗</a></header><main class="content"><div class="intro"><div><p class="eyebrow">MAo Studio / Publishing</p><h1>News & updates</h1><p>Publish and manage stories in English and Kiswahili.</p></div><button id="new-post" class="btn btn-primary" type="button" hidden>+ New update</button></div><div id="admin-status" class="alert" role="status">Checking access…</div>
+<div id="admin-workspace" hidden><section class="stats" aria-label="Content summary"><div class="card stat"><div class="card-body"><span>Published</span><strong id="stat-published">0</strong><small>Visible on the website</small></div></div><div class="card stat"><div class="card-body"><span>Drafts</span><strong id="stat-drafts">0</strong><small>Waiting to be published</small></div></div><div class="card stat"><div class="card-body"><span>Total views</span><strong id="stat-views">0</strong><small>Approximate article opens</small></div></div></section>
+<section class="card content-card" aria-labelledby="posts-heading"><div class="card-header list-head"><div><p class="eyebrow">CONTENT LIBRARY</p><h2 id="posts-heading" class="card-title">All updates</h2></div><div class="filters" role="group" aria-label="Filter posts"><button class="filter active" type="button" data-filter="active">Active</button><button class="filter" type="button" data-filter="trash">Trash</button></div></div><div class="table-responsive"><table class="table card-table table-vcenter"><thead><tr><th>Update</th><th>Status</th><th>Published</th><th>Views</th><th>Last edited</th><th>Actions</th></tr></thead><tbody id="post-list"></tbody></table></div></section>
+<section id="editor-panel" class="card content-card" aria-labelledby="editor-heading" hidden><div class="card-header"><div><p class="eyebrow">EDITOR</p><h2 id="editor-heading" class="card-title">New update</h2></div></div><div class="card-body"><form id="post-form"><input type="hidden" name="id"><input type="hidden" name="image_url"><div class="form-grid"><div><label class="form-label" for="title-en">English title</label><input class="form-control" id="title-en" name="title_en" maxlength="160" required></div><div><label class="form-label" for="title-sw">Kichwa cha Kiswahili</label><input class="form-control" id="title-sw" name="title_sw" maxlength="160" required></div><div><label class="form-label" for="body-en">English text</label><textarea class="form-control" id="body-en" name="body_en" rows="7" maxlength="10000" required></textarea></div><div><label class="form-label" for="body-sw">Maelezo ya Kiswahili</label><textarea class="form-control" id="body-sw" name="body_sw" rows="7" maxlength="10000" required></textarea></div></div><div class="media-row"><div><label class="form-label" for="image">Post image</label><input class="form-control" id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp"><small>JPEG, PNG or WebP, up to 5 MB. Choosing a file replaces the current image.</small><p id="current-image">No image selected.</p></div><div><label class="form-label" for="post-status">Publish status</label><select class="form-select" id="post-status" name="status"><option value="draft">Draft</option><option value="published">Published</option></select><small>Published updates appear on the public site immediately.</small></div></div><div class="form-actions"><button class="btn btn-primary" type="submit">Save update</button><button id="cancel-edit" class="btn btn-outline-secondary" type="button">Cancel</button></div></form></div></section></div></main></div></div><script src="/assets/js/admin.js" defer></script></body></html>

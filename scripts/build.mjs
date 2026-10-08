@@ -10,6 +10,8 @@ await mkdir(dist, { recursive: true });
 for (const directory of ['assets', 'admin']) {
   await cp(join(root, directory), join(dist, directory), { recursive: true });
 }
+await mkdir(join(dist, 'assets', 'vendor', 'tabler'), { recursive: true });
+await cp(join(root, 'node_modules', '@tabler', 'core', 'dist', 'css', 'tabler.min.css'), join(dist, 'assets', 'vendor', 'tabler', 'tabler.min.css'));
 for (const filename of ['index.html', '_routes.json']) {
   await writeFile(join(dist, filename), await readFile(join(root, filename)));
 }
