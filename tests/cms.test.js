@@ -80,4 +80,61 @@ test('sidebar Write an update link opens the same editor as New update', async (
   assert.match(script, /getElementById\('write-update-link'\)\.addEventListener\('click', openNewPost\)/);
 });
 
+
+test('real sidebar and New update clicks open editor; deep link opens after load', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const { runInNewContext } = await import('node:vm');
+  const page = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
+  const script = await readFile(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
+  assert.match(page, /id="write-update-link" href="\/admin\/\?compose=1#editor-panel"/);
+  assert.match(page, /admin\.js\?v=20261008-editor-nav2/);
+
+  const simulate = async (search = '') => {
+    const nodes = new Map();
+    const element = (id) => {
+      if (!nodes.has(id)) {
+        nodes.set(id, {
+          id, hidden: id === 'editor-panel', textContent: '', value: '',
+          listeners: {},
+          addEventListener(type, handler) { this.listeners[type] = handler; },
+          replaceChildren() {},
+          append() {},
+          reset() {},
+          scrollIntoView() { this.scrolled = true; }
+        });
+      }
+      return nodes.get(id);
+    };
+    const form = element('post-form');
+    form.elements = { namedItem: element };
+    form.querySelector = () => element('submit-button');
+    const context = {
+      document: {
+        getElementById: element,
+        querySelectorAll: () => [],
+        createElement: (tag) => element('created-' + tag)
+      },
+      window: { location: { search, hash: '' } },
+      URLSearchParams,
+      fetch: async () => ({ ok: true, json: async () => ({ posts: [], email: 'admin@example.org' }) })
+    };
+    runInNewContext(script, context);
+    for (let i = 0; i < 6; i++) await Promise.resolve();
+    assert.equal(element('admin-status').textContent, 'CMS is ready.');
+    return element;
+  };
+
+  const nodes = await simulate();
+  let prevented = false;
+  nodes('write-update-link').listeners.click({ preventDefault() { prevented = true; } });
+  assert.equal(prevented, true);
+  assert.equal(nodes('editor-panel').hidden, false);
+  assert.equal(nodes('editor-panel').scrolled, true);
+  nodes('editor-panel').hidden = true;
+  nodes('new-post').listeners.click({ preventDefault() {} });
+  assert.equal(nodes('editor-panel').hidden, false);
+  const deepLink = await simulate('?compose=1');
+  assert.equal(deepLink('editor-panel').hidden, false);
+});
+
 test.after(() => { globalThis.fetch = originalFetch; });
