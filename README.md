@@ -4,6 +4,8 @@ Fungua `index.html` kwenye browser kuona mfano wa ukurasa wa mwanzo wa Mkulima A
 
 Lugha ya mwanzo ni English. Kichagua lugha kwenye navigation hubadilisha maudhui kati ya English na Kiswahili. Chaguo la mtumiaji huhifadhiwa kwenye browser yake; mtumiaji mpya huona English.
 
+Typography: maandishi yote yasiyo headings hutumia Inter, ikiwa ni pamoja na lebo ndogo, namba za kadi na anuani. Headings zimebakia Fraunces. Sheria hizi ni zilezile kwa upana wote wa vifaa.
+
 Maudhui ya shirika yametolewa kwenye *MAO KATIBA 2.docx*, toleo la kwanza la 2024. Hakuna takwimu za athari, matukio, majina ya viongozi, taarifa za mawasiliano, au miradi iliyotekelezwa iliyobuniwa. Sehemu ya updates inaonyesha hali tupu hadi taarifa halisi zichapishwe.
 
 ## Asili ya muonekano
