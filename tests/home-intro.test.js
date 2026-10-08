@@ -49,11 +49,11 @@ test('all six public pages show only the MAo logo, with intro script before body
   ];
   for (const [path, imageSrc, cssVersion] of routes) {
     const html = await read(path);
-    const markup = html.match(/<div id="mao-home-intro" class="mao-home-intro" aria-hidden="true">([\\s\\S]*?)<\\/div>/);
+    const markup = html.match(/<div id="mao-home-intro" class="mao-home-intro" aria-hidden="true">([\s\S]*?)<\/div>/);
     assert.ok(markup, 'intro overlay missing on ' + path);
     assert.equal((html.match(/id="mao-home-intro"/g) || []).length, 1, path);
     assert.ok(markup[1].includes('<img src="' + imageSrc + '" alt=""'), path);
-    assert.ok(!/<(?:h[1-6]|p|span|a|button)\\b/.test(markup[1]), path);
+    assert.ok(!/<(?:h[1-6]|p|span|a|button)\b/.test(markup[1]), path);
     assert.ok(html.includes('mao.css?v=' + cssVersion), path);
     assert.ok(html.includes('home-intro.js?v=2'), path);
     assert.ok(html.includes('rel="preload" as="image"'), path);
