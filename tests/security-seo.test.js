@@ -35,7 +35,9 @@ test('static headers enforce clickjacking and HSTS but use report-only script CS
   assert.match(contents, /Content-Security-Policy-Report-Only: default-src 'self'/);
   assert.match(contents, /https:\/\/www\.mkulimaagricultural\.org\/\*/);
   assert.match(contents, /Strict-Transport-Security: max-age=15552000/);
-  assert.ok(!contents.includes('includeSubDomains'));
+  const hstsHeaderLines = contents.split('\\n').filter(line => line.trimStart().startsWith('Strict-Transport-Security:'));
+  assert.ok(hstsHeaderLines.length > 0);
+  assert.ok(hstsHeaderLines.every(line => !line.includes('includeSubDomains') && !line.includes('preload')));
   const build = await readFile(new URL('../scripts/build.mjs', import.meta.url), 'utf8');
   assert.match(build, /'_headers'/);
 });
