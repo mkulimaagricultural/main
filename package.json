@@ -5,7 +5,7 @@
   "description": "MAo public website and Cloudflare Pages CMS",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/cms.test.js tests/media.test.js tests/sitemap.test.js tests/security-seo.test.js tests/contact-emails.test.js tests/language-dropdown.test.js tests/nav-uppercase.test.js"
+    "test": "node --test tests/cms.test.js tests/media.test.js tests/sitemap.test.js tests/security-seo.test.js tests/contact-emails.test.js tests/language-dropdown.test.js tests/nav-uppercase.test.js tests/home-intro.test.js"
   },
   "dependencies": {
     "@tabler/core": "1.6.1"
