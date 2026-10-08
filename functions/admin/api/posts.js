@@ -1,4 +1,4 @@
-import { json, parsePostRequest } from '../../../lib/posts.js';
+import { json, parsePostRequest, loadPostMedia } from '../../../lib/posts.js';
 
 export async function onRequestGet({ env, data }) {
   if (!env.DB) return json({ error: 'CMS database is not configured.' }, 503);
@@ -10,7 +10,8 @@ export async function onRequestGet({ env, data }) {
       FROM posts p LEFT JOIN post_meta m ON m.post_id = p.id
       ORDER BY p.created_at DESC LIMIT 100
     `).all();
-    return json({ role: data.admin.role, email: data.admin.email, posts: results || [] });
+    const posts = await loadPostMedia(env.DB, results || []);
+    return json({ role: data.admin.role, email: data.admin.email, posts });
   } catch {
     return json({ error: 'Could not load posts.' }, 503);
   }
@@ -24,15 +25,19 @@ export async function onRequestPost({ request, env, data }) {
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   try {
-    await env.DB.batch([env.DB.prepare(`
+    const operations = [env.DB.prepare(`
       INSERT INTO posts (id, title_en, title_sw, body_en, body_sw, image_url, status, created_at, updated_at, published_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(id, post.title_en, post.title_sw, post.body_en, post.body_sw, post.image_url,
       post.status, now, now, post.status === 'published' ? now : null),
     env.DB.prepare('INSERT INTO post_meta (post_id, created_by, updated_by) VALUES (?, ?, ?)')
-      .bind(id, data.admin.email, data.admin.email)]);
+      .bind(id, data.admin.email, data.admin.email)];
+    post.media.forEach((item, position) => operations.push(env.DB.prepare(
+      'INSERT INTO post_media (post_id, position, media_url, media_type) VALUES (?, ?, ?, ?)'
+    ).bind(id, position, item.url, item.type)));
+    await env.DB.batch(operations);
     return json({ id }, 201);
   } catch {
-    return json({ error: 'Could not save post.' }, 500);
+    return json({ error: 'Could not save post. Check that migration 0003_post_media.sql is applied.' }, 500);
   }
 }
