@@ -1,9 +1,10 @@
-/* First-visit-only homepage logo intro. Keep this tiny script in <head> to avoid a home flash. */
+/* One-time logo intro on each public page. Run in <head> to avoid a content flash. */
 (() => {
   'use strict';
 
   const root = document.documentElement;
-  const key = 'mao-home-logo-intro-shown';
+  const currentPath = window.location?.pathname?.replace(/\/+$/, '') || '/';
+  const key = currentPath === '/' ? 'mao-home-logo-intro-shown' : 'mao-home-logo-intro-shown:' + currentPath;
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   if (reducedMotion) return;
 
@@ -29,6 +30,6 @@
     if (event.target?.id === 'mao-home-intro') finish();
   });
 
-  // Fail-safe: never keep the homepage blocked if CSS animation fails to run.
+  // Fail-safe: never keep public content blocked if CSS animation fails to run.
   window.setTimeout(finish, 1600);
 })();
