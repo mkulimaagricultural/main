@@ -173,7 +173,8 @@
       post.image_url = post.media.find((item) => item.type === 'image')?.url || '';
       const id = field('id').value;
       await api(id ? `/admin/api/posts/${encodeURIComponent(id)}` : '/admin/api/posts', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(post) });
-      resetForm(); await load(); message('Update saved. Published posts are live now.', 'success');
+      resetForm(); await load();
+      message(post.status === 'published' ? 'Update published. It is live on the website.' : 'Draft saved. It is not visible on the public website.', 'success');
     } catch (error) { message(error.message || 'Could not save update.', 'error'); }
     finally { submit.disabled = false; }
   });
