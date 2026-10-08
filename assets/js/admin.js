@@ -60,7 +60,7 @@
   let posts = [];
   let filter = 'active';
 
-  function message(value, kind = '') { status.textContent = value; status.dataset.kind = kind; }
+  function message(value, kind = '') { status.textContent = value; status.dataset.kind = kind; status.hidden = !value; }
   function field(name) { return form.elements.namedItem(name); }
   function date(value) { return value ? new Date(value).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'; }
   async function api(url, options = {}) {
@@ -152,7 +152,7 @@
     document.getElementById('stat-published').textContent = active.filter((post) => post.status === 'published').length;
     document.getElementById('stat-drafts').textContent = active.filter((post) => post.status === 'draft').length;
     document.getElementById('stat-views').textContent = active.reduce((sum, post) => sum + Number(post.view_count || 0), 0).toLocaleString();
-    renderList(); message('CMS is ready.', 'success');
+    renderList(); message('');
   }
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
