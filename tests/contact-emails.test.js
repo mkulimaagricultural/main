@@ -43,3 +43,20 @@ test('business email labels remain bilingual', async () => {
   assert.ok(english >= 0);
   assert.ok(swahili > english);
 });
+
+test('Contact email directory has semantic separated rows, wide card, responsive spacing and refreshed stylesheet', async () => {
+  const html = await text('contact/index.html');
+  const css = await text('assets/css/pages.css');
+  assert.match(html, /class="mao-contact-card mao-contact-card--emails/);
+  assert.match(html, /<dl class="mao-contact-email-list">/);
+  assert.match(html, /pages\\.css\\?v=contact-email-layout-2/);
+  assert.equal((html.match(/class="mao-contact-email-item(?: mao-contact-email-item--existing)?"/g) || []).length, 5);
+  for (const address of [...addresses, 'mkulimaagricultural@gmail.com']) {
+    assert.ok(html.includes('<dd><a href="mailto:' + address + '">' + address + '</a></dd>'), address);
+  }
+  assert.match(css, /\\.mao-contact-card--emails\\{grid-column:1\\/-1/);
+  assert.match(css, /\\.mao-contact-email-item dt\\{display:block/);
+  assert.match(css, /\\.mao-contact-email-item dd\\{display:block/);
+  assert.match(css, /\\.mao-contact-email-item a\\{display:block/);
+  assert.match(css, /@media\\(max-width:650px\\)\\{\\.mao-contact-email-list\\{grid-template-columns:minmax\\(0,1fr\\)/);
+});
