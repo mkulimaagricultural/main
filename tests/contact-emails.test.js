@@ -29,16 +29,16 @@ test('homepage promotes business contact emails and Donate shows donation addres
   assert.ok(donate.includes('mailto:donation@mkulimaagricultural.org'));
 });
 
-test('old Gmail address is hidden on Home but preserved on Contact and Donate', async () => {
+test('former Gmail address is absent from Home and Contact but remains on Donate', async () => {
   const home = await text('index.html');
+  const contact = await text('contact/index.html');
+  const donate = await text('donate/index.html');
   assert.ok(!home.includes('mkulimaagricultural@gmail.com'));
+  assert.ok(!contact.includes('mkulimaagricultural@gmail.com'));
   assert.ok(home.includes('href="mailto:info@mkulimaagricultural.org"'));
   assert.ok(home.includes('href="mailto:help@mkulimaagricultural.org"'));
   assert.ok(home.includes('P.O. Box 149, Mbeya, Tanzania'));
-  for (const path of ['contact/index.html', 'donate/index.html']) {
-    const html = await text(path);
-    assert.ok(html.includes('href="mailto:mkulimaagricultural@gmail.com"'), path);
-  }
+  assert.ok(donate.includes('href="mailto:mkulimaagricultural@gmail.com"'));
 });
 
 test('business email labels remain bilingual', async () => {
@@ -55,8 +55,8 @@ test('Contact email directory has semantic rows, wide card, responsive spacing a
   assert.ok(html.includes('class="mao-contact-card mao-contact-card--emails'));
   assert.ok(html.includes('<dl class="mao-contact-email-list">'));
   assert.ok(html.includes('href="/assets/css/pages.css?v=contact-email-layout-2"'));
-  assert.equal(html.split('class="mao-contact-email-item').length - 1, 5);
-  for (const address of [...addresses, 'mkulimaagricultural@gmail.com']) {
+  assert.equal(html.split('class="mao-contact-email-item').length - 1, 4);
+  for (const address of addresses) {
     assert.ok(html.includes('<dd><a href="mailto:' + address + '">' + address + '</a></dd>'), address);
   }
   assert.ok(css.includes('.mao-contact-card--emails{grid-column:1/-1'));
