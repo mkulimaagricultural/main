@@ -87,7 +87,7 @@ test('real sidebar and New update clicks open editor; deep link opens after load
   const page = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
   const script = await readFile(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
   assert.match(page, /id="write-update-link" href="\/admin\/\?compose=1#editor-panel"/);
-  assert.match(page, /admin\.js\?v=20261008-cms-audit1/);
+  assert.match(page, /admin\.js\?v=20261009-hide-idle-banner/);
 
   const simulate = async (search = '') => {
     const nodes = new Map();
@@ -119,8 +119,10 @@ test('real sidebar and New update clicks open editor; deep link opens after load
       fetch: async () => ({ ok: true, json: async () => ({ posts: [], email: 'admin@example.org' }) })
     };
     runInNewContext(script, context);
-    for (let i = 0; i < 12 && !element('admin-status').textContent; i++) await new Promise((resolve) => setImmediate(resolve));
-    assert.equal(element('admin-status').textContent, 'CMS is ready.');
+    for (let i = 0; i < 12 && !element('admin-status').hidden; i++) await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(element('admin-workspace').hidden, false);
+    assert.equal(element('admin-status').textContent, '');
+    assert.equal(element('admin-status').hidden, true);
     return element;
   };
 
@@ -135,6 +137,20 @@ test('real sidebar and New update clicks open editor; deep link opens after load
   assert.equal(nodes('editor-panel').hidden, false);
   const deepLink = await simulate('?compose=1');
   assert.equal(deepLink('editor-panel').hidden, false);
+});
+
+
+test('CMS shows alerts only when useful and hides idle-ready status without removing error feedback', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const script = await readFile(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../assets/css/admin.css', import.meta.url), 'utf8');
+  assert.ok(!script.includes("CMS is ready."));
+  assert.ok(script.includes("renderList(); message('');"));
+  assert.ok(script.includes('status.hidden = !value;'));
+  assert.ok(css.includes('#admin-status[hidden]{display:none!important}'));
+  assert.ok(script.includes("message('Saving update…')"));
+  assert.ok(script.includes("message(error.message || 'Could not save update.', 'error')"));
+  assert.ok(script.includes("message('Update restored.', 'success')"));
 });
 
 test.after(() => { globalThis.fetch = originalFetch; });
