@@ -20,6 +20,7 @@ function simulate(source, options = {}) {
     getElementById(id) { return id === overlay.id ? overlay : null; }
   };
   const window = {
+    location: { pathname: options.pathname ?? '/' },
     matchMedia() { return { matches: Boolean(options.reducedMotion) }; },
     sessionStorage: {
       getItem(key) {
@@ -37,21 +38,29 @@ function simulate(source, options = {}) {
   return { classes, storage, listeners, timers, overlay };
 }
 
-test('home intro consists only of the MAo logo, loads before paint, and is never added to subpages', async () => {
-  const home = await read('index.html');
-  assert.ok(home.includes('<script src="assets/js/home-intro.js?v=1"></script>'));
-  assert.ok(home.includes('mao.css?v=home-intro-1'));
-  assert.ok(home.indexOf('home-intro.js?v=1') < home.indexOf('<body>'));
-  const markup = home.match(/<div id="mao-home-intro" class="mao-home-intro" aria-hidden="true">([\s\S]*?)<\/div>/);
-  assert.ok(markup, 'homepage has one center-logo overlay');
-  assert.equal((home.match(/id="mao-home-intro"/g) || []).length, 1);
-  assert.match(markup[1], /^<img src="assets\/img\/mao-logo\.png" alt=""[^>]*>$/);
-  assert.ok(!/<(?:h[1-6]|p|span|a|button)\b/.test(markup[1]));
-  for (const path of ['about/index.html', 'focus/index.html', 'updates/index.html', 'contact/index.html', 'donate/index.html']) {
-    const otherPage = await read(path);
-    assert.ok(!otherPage.includes('id="mao-home-intro"'), path);
-    assert.ok(!otherPage.includes('home-intro.js'), path);
+test('all six public pages show only the MAo logo, with intro script before body and no extra text', async () => {
+  const routes = [
+    ['index.html', 'assets/img/mao-logo.png', 'home-intro-1'],
+    ['about/index.html', '/assets/img/mao-logo.png', 'public-logo-intro-2'],
+    ['focus/index.html', '/assets/img/mao-logo.png', 'public-logo-intro-2'],
+    ['updates/index.html', '/assets/img/mao-logo.png', 'public-logo-intro-2'],
+    ['contact/index.html', '/assets/img/mao-logo.png', 'public-logo-intro-2'],
+    ['donate/index.html', '/assets/img/mao-logo.png', 'public-logo-intro-2']
+  ];
+  for (const [path, imageSrc, cssVersion] of routes) {
+    const html = await read(path);
+    const markup = html.match(/<div id="mao-home-intro" class="mao-home-intro" aria-hidden="true">([\\s\\S]*?)<\\/div>/);
+    assert.ok(markup, 'intro overlay missing on ' + path);
+    assert.equal((html.match(/id="mao-home-intro"/g) || []).length, 1, path);
+    assert.ok(markup[1].includes('<img src="' + imageSrc + '" alt=""'), path);
+    assert.ok(!/<(?:h[1-6]|p|span|a|button)\\b/.test(markup[1]), path);
+    assert.ok(html.includes('mao.css?v=' + cssVersion), path);
+    assert.ok(html.includes('home-intro.js?v=2'), path);
+    assert.ok(html.includes('rel="preload" as="image"'), path);
+    assert.ok(html.indexOf('home-intro.js?v=2') < html.indexOf('<body'), path);
   }
+  const home = await read('index.html');
+  assert.ok(home.includes('<script src="assets/js/home-intro.js?v=2"></script>'));
 });
 
 test('intro CSS centers logo, fades cleanly, and fails closed if JavaScript stalls', async () => {
@@ -81,6 +90,60 @@ test('intro shows once per tab session and clears on animation finish', async ()
   const second = simulate(script, { storage });
   assert.equal(second.classes.has('mao-home-intro-active'), false);
   assert.equal(second.timers.length, 0);
+});
+
+
+test('separate pages each animate only once, sharing the same tab session without reset', async () => {
+  const script = await read('assets/js/home-intro.js');
+  const storage = new Map();
+  const home = simulate(script, { pathname: '/', storage });
+  assert.equal(home.classes.has('mao-home-intro-active'), true);
+  home.timers[0].callback();
+
+  const about = simulate(script, { pathname: '/about/', storage });
+  assert.equal(about.classes.has('mao-home-intro-active'), true);
+  assert.equal(storage.get('mao-home-logo-intro-shown:/about'), '1');
+  about.timers[0].callback();
+
+  const donate = simulate(script, { pathname: '/donate/', storage });
+  assert.equal(donate.classes.has('mao-home-intro-active'), true);
+  donate.timers[0].callback();
+
+  const article = simulate(script, { pathname: '/updates/example-post', storage });
+  assert.equal(article.classes.has('mao-home-intro-active'), true);
+  assert.equal(storage.get('mao-home-logo-intro-shown:/updates/example-post'), '1');
+
+  const aboutAgain = simulate(script, { pathname: '/about', storage });
+  const homeAgain = simulate(script, { pathname: '/', storage });
+  assert.equal(aboutAgain.classes.has('mao-home-intro-active'), false);
+  assert.equal(homeAgain.classes.has('mao-home-intro-active'), false);
+  assert.equal(aboutAgain.timers.length, 0);
+  assert.equal(homeAgain.timers.length, 0);
+});
+
+test('published article pages include the same branded intro without altering article content', async () => {
+  const { onRequestGet } = await import('../functions/updates/[id].js');
+  const post = {
+    id: 'test-article', title_en: 'MAo article', title_sw: 'Habari ya MAo',
+    body_en: 'Article body', body_sw: 'Maelezo ya habari',
+    image_url: '', published_at: '2026-10-08T12:00:00Z'
+  };
+  const DB = { prepare() { return { bind() { return {
+    first: async () => post,
+    all: async () => ({ results: [] }),
+    run: async () => ({ success: true })
+  }; } }; } };
+  const response = await onRequestGet({
+    env: { DB }, params: { id: post.id },
+    request: new Request('https://www.mkulimaagricultural.org/updates/test-article')
+  });
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.ok(html.includes('<script src="/assets/js/home-intro.js?v=2"></script>'));
+  assert.ok(html.includes('href="/assets/css/mao.css?v=public-logo-intro-2"'));
+  assert.ok(html.includes('<div id="mao-home-intro" class="mao-home-intro" aria-hidden="true"><img src="/assets/img/mao-logo.png" alt=""'));
+  assert.ok(html.includes('<h1>MAo article</h1>'));
+  assert.ok(html.includes('Article body'));
 });
 
 test('reduced-motion preference skips intro and fallback timeout clears it if animation does not fire', async () => {
