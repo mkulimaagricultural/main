@@ -9,7 +9,7 @@
       languageLabel: 'Website language', openMenu: 'Open menu', closeMenu: 'Close menu',
       heroTitlePrefix: 'Agriculture is ', heroTitleAccent: 'Life',
       heroLead: 'We aim to empower women and young people through knowledge, resources, and opportunities in productive, sustainable agriculture.',
-      heroFocus: 'Explore our focus', heroAbout: 'About MAo', imageNote: 'Illustrative image created for this preview',
+      heroFocus: 'Explore our focus', heroAbout: 'About MAo',
       aboutLabel: 'About us', aboutTitle: 'Women and young farmers at the heart of change',
       aboutBody1: 'MAo is a nongovernmental organization founded to support women and young farmers in Tanzania. Its constitution sets out an ambition to address food insecurity, climate change, losses from limited farming knowledge, lack of market access, and youth unemployment.',
       aboutBody2: 'The constitution places the head office in Uyole, Mbeya District, Mbeya Region. It describes Mainland Tanzania and Zanzibar as the intended area of operation.',
@@ -31,7 +31,7 @@
       contactLabel: 'Contact us', contactTitle: "Let's advance agriculture together",
       contactBody: 'Reach MAo using the official email and postal address below.',
       contactEmailLabel: 'Email', contactPostLabel: 'Postal address',
-      contactLocation: 'Uyole · Mbeya District · Tanzania', socialMedia: 'Social media', footerRights: 'All rights reserved.'
+      contactLocation: 'Uyole · Mbeya District · Tanzania', socialMedia: 'Social media', footerFollow: 'Follow Us', footerRights: 'All rights reserved.'
     },
     sw: {
       metaDescription: 'Mkulima Agricultural Organization (MAo) inalenga kuwawezesha wanawake na vijana kupitia kilimo chenye tija na endelevu.',
@@ -40,7 +40,7 @@
       languageLabel: 'Lugha ya tovuti', openMenu: 'Fungua menyu', closeMenu: 'Funga menyu',
       heroTitlePrefix: 'Kilimo ni ', heroTitleAccent: 'Uhai',
       heroLead: 'Tunadhamiria kuwawezesha wanawake na vijana kupitia maarifa, rasilimali na fursa za kilimo chenye tija na endelevu.',
-      heroFocus: 'Jua tunacholenga', heroAbout: 'Kuhusu MAo', imageNote: 'Picha ya mfano iliyotengenezwa kwa ajili ya preview',
+      heroFocus: 'Jua tunacholenga', heroAbout: 'Kuhusu MAo',
       aboutLabel: 'Kuhusu sisi', aboutTitle: 'Wakulima wanawake na vijana mbele ya mabadiliko',
       aboutBody1: 'MAo ni shirika lisilo la kiserikali lililoanzishwa kwa lengo la kuwasaidia wakulima wanawake na vijana wa Tanzania. Katiba yake inaeleza dhamira ya kukabiliana na upungufu wa chakula, athari za mabadiliko ya tabianchi, hasara za kilimo kisicho cha kitaalamu, uhaba wa masoko na ukosefu wa ajira kwa vijana.',
       aboutBody2: 'Ofisi kuu imeainishwa kuwa Uyole, Wilaya ya Mbeya, Mkoa wa Mbeya. Kwa mujibu wa katiba, eneo la utendaji linalokusudiwa ni Tanzania Bara na Zanzibar.',
@@ -62,7 +62,7 @@
       contactLabel: 'Wasiliana nasi', contactTitle: 'Tushirikiane kuendeleza kilimo',
       contactBody: 'Wasiliana na MAo kupitia barua pepe rasmi na anuani ya posta hapa chini.',
       contactEmailLabel: 'Barua pepe', contactPostLabel: 'Sanduku la posta',
-      contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', socialMedia: 'Mitandao ya kijamii', footerRights: 'Haki zote zimehifadhiwa.'
+      contactLocation: 'Uyole · Wilaya ya Mbeya · Tanzania', socialMedia: 'Mitandao ya kijamii', footerFollow: 'Tufuatilie', footerRights: 'Haki zote zimehifadhiwa.'
     }
   };
 
