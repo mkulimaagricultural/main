@@ -7,7 +7,7 @@
   <title>MAo — Mkulima Agricultural Organization</title>
   <link rel="icon" type="image/png" href="assets/img/mao-logo.png">
   <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/mao.css?v=donate-1">
+  <link rel="stylesheet" href="assets/css/mao.css?v=lang-dropdown-1">
 
   <link rel="canonical" href="https://www.mkulimaagricultural.org/">
   <meta property="og:type" content="website">
@@ -35,12 +35,12 @@
         <a href="/donate/" class="nav__donate" data-i18n="navDonate">Donate</a>
       </div>
       <div class="mao-language-control">
-        <label class="mao-visually-hidden" for="language-select" data-i18n="languageLabel">Website language</label>
-        <select id="language-select" class="mao-language-select" aria-label="Website language" data-i18n-aria="languageLabel">
-          <option value="en">English</option>
-          <option value="sw">Kiswahili</option>
-        </select>
-      </div>
+  <button id="language-select" class="mao-language-trigger" type="button" aria-label="Website language" data-i18n-aria="languageLabel" aria-expanded="false" aria-controls="mao-language-menu"><span class="mao-language-value">English</span><span class="mao-language-chevron" aria-hidden="true"></span></button>
+  <div id="mao-language-menu" class="mao-language-menu" role="group" aria-label="Website language" data-i18n-aria="languageLabel" hidden>
+    <button type="button" class="mao-language-option" data-language="en" aria-pressed="true"><span>English</span><span class="mao-language-check" aria-hidden="true">✓</span></button>
+    <button type="button" class="mao-language-option" data-language="sw" aria-pressed="false"><span>Kiswahili</span><span class="mao-language-check" aria-hidden="true">✓</span></button>
+  </div>
+</div>
       <button class="nav__toggle" type="button" aria-label="Open menu" data-i18n-aria="openMenu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </nav>
@@ -160,7 +160,7 @@
     <div class="container mao-footer__bottom"><small>Copyright © <span id="copyright-year">2026</span> Mkulima Agricultural Organization. <span data-i18n="footerRights">All rights reserved.</span></small></div>
   </footer>
   <script src="assets/js/main.js?v=donate-1" defer></script>
-  <script src="assets/js/language.js?v=donate-1" defer></script>
+  <script src="assets/js/language.js?v=lang-dropdown-1" defer></script>
   <script src="assets/js/updates.js" defer></script>
 </body>
 </html>
