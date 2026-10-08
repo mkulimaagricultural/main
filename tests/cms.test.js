@@ -153,4 +153,24 @@ test('CMS shows alerts only when useful and hides idle-ready status without remo
   assert.ok(script.includes("message('Update restored.', 'success')"));
 });
 
+
+test('MAo Studio sidebar uses only a bold sans-serif wordmark, preserving CMS navigation', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const html = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../assets/css/admin.css', import.meta.url), 'utf8');
+  const brand = html.match(/<a class="brand" href="\/admin\/"[^>]*>([\s\S]*?)<\/a>/);
+  assert.ok(brand, 'sidebar brand link remains present');
+  assert.equal(brand[1], '<strong>MAo Studio</strong>');
+  assert.ok(!brand[1].includes('<img'));
+  assert.ok(!brand[1].includes('<small'));
+  assert.ok(html.includes('href="/assets/css/admin.css?v=studio-wordmark-1"'));
+  assert.ok(html.includes('id="write-update-link"'));
+  assert.ok(html.includes('id="new-post"'));
+  assert.ok(html.includes('<link rel="icon" href="/assets/img/mao-logo.png">'));
+  assert.ok(css.includes("font-family:'Roboto Condensed','Arial Narrow',Arial,sans-serif"));
+  assert.ok(css.includes('font-weight:800'));
+  assert.ok(!css.includes('.brand img{'));
+  assert.ok(!css.includes('.brand small{'));
+});
+
 test.after(() => { globalThis.fetch = originalFetch; });
