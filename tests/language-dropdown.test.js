@@ -17,7 +17,7 @@ test('all six public pages use the same branded dropdown instead of a device-nat
     assert.match(source, /data-language="en" aria-pressed="true"/, path);
     assert.match(source, /data-language="sw" aria-pressed="false"/, path);
     assert.ok(!source.includes('<select id="language-select"'), path);
-    assert.ok(source.includes('mao.css?v=nav-uppercase-1'), path);
+    assert.ok(source.includes('mao.css?v=' + (path === 'index.html' ? 'home-intro-1' : 'nav-uppercase-1')), path);
     assert.ok(source.includes('language.js?v=lang-dropdown-1'), path);
   }
 });

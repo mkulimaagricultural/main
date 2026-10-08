@@ -35,3 +35,19 @@ section[id]{scroll-margin-top:76px}
 @media(max-width:560px){.mao-hero{min-height:680px}.mao-hero__inner{padding-top:8rem;padding-bottom:5rem}.mao-hero__title{font-size:clamp(3.4rem,14vw,5rem)}.mao-actions .btn{width:100%;justify-content:center}.mao-card-grid{grid-template-columns:1fr}.mao-footer__inner{flex-direction:column;gap:1.5rem}.mao-footer__connect{align-items:flex-start}.mao-social{justify-content:flex-start}}
 
 .mao-update-card video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#142b20}
+
+/* One-time home intro: visual-only logo, automatically clears even without JS callback. */
+.mao-home-intro{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:#fdf8f0;pointer-events:none}
+html.mao-home-intro-active .mao-home-intro{display:flex;pointer-events:auto;animation:mao-home-intro-curtain 1350ms ease-in-out both}
+.mao-home-intro img{display:block;width:clamp(110px,18vw,165px);max-width:60vw;height:auto;object-fit:contain;animation:mao-home-intro-logo 1350ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes mao-home-intro-logo{
+  0%{opacity:0;transform:translateY(8px) scale(.94)}
+  25%,65%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-4px) scale(1.035)}
+}
+@keyframes mao-home-intro-curtain{
+  0%,70%{opacity:1;visibility:visible}
+  99%{opacity:0;visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+@media(prefers-reduced-motion:reduce){html.mao-home-intro-active .mao-home-intro{display:none!important}}
