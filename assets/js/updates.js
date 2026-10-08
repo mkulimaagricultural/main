@@ -16,13 +16,22 @@
     const cards = posts.map((post) => {
       const article = document.createElement('article');
       article.className = 'mao-update-card';
-      if (post.image_url) {
+      const media = post.media?.length ? post.media : post.image_url ? [{ url: post.image_url, type: 'image' }] : [];
+      const featured = media.find((item) => item.type === 'image') || media.find((item) => item.type === 'video');
+      if (featured?.type === 'image') {
         const image = document.createElement('img');
-        image.src = post.image_url;
+        image.src = featured.url;
         image.alt = sw ? post.title_sw : post.title_en;
         image.loading = 'lazy';
         image.decoding = 'async';
         article.append(image);
+      } else if (featured?.type === 'video') {
+        const video = document.createElement('video');
+        video.src = featured.url;
+        video.controls = true;
+        video.playsInline = true;
+        video.preload = 'metadata';
+        article.append(video);
       }
       const body = document.createElement('div');
       body.className = 'mao-update-card__body';

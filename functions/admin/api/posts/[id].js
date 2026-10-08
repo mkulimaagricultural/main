@@ -12,16 +12,21 @@ export async function onRequestPut({ request, env, data, params }) {
     if (existing.deleted_at) return json({ error: 'Restore this post before editing it.' }, 409);
     const now = new Date().toISOString();
     const publishedAt = post.status === 'published' ? existing.published_at || now : null;
-    await env.DB.batch([env.DB.prepare(`
+    const operations = [env.DB.prepare(`
       UPDATE posts SET title_en = ?, title_sw = ?, body_en = ?, body_sw = ?, image_url = ?,
         status = ?, updated_at = ?, published_at = ? WHERE id = ?
     `).bind(post.title_en, post.title_sw, post.body_en, post.body_sw, post.image_url,
       post.status, now, publishedAt, params.id),
     env.DB.prepare(`INSERT INTO post_meta (post_id, updated_by) VALUES (?, ?)
-      ON CONFLICT(post_id) DO UPDATE SET updated_by = excluded.updated_by`).bind(params.id, data.admin.email)]);
+      ON CONFLICT(post_id) DO UPDATE SET updated_by = excluded.updated_by`).bind(params.id, data.admin.email),
+    env.DB.prepare('DELETE FROM post_media WHERE post_id = ?').bind(params.id)];
+    post.media.forEach((item, position) => operations.push(env.DB.prepare(
+      'INSERT INTO post_media (post_id, position, media_url, media_type) VALUES (?, ?, ?, ?)'
+    ).bind(params.id, position, item.url, item.type)));
+    await env.DB.batch(operations);
     return json({ id: params.id });
   } catch {
-    return json({ error: 'Could not update post.' }, 500);
+    return json({ error: 'Could not update post. Check that migration 0003_post_media.sql is applied.' }, 500);
   }
 }
 

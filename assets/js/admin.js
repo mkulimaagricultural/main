@@ -4,7 +4,59 @@
   const list = document.getElementById('post-list');
   const panel = document.getElementById('editor-panel');
   const form = document.getElementById('post-form');
-  const imageNote = document.getElementById('current-image');
+  const mediaList = document.getElementById('media-items');
+  const mediaInput = form.elements.namedItem('media');
+  const IMAGE_LIMIT = 15_000_000;
+  const VIDEO_LIMIT = 90_000_000;
+  const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm']);
+  let attachments = [];
+
+  function mediaKind(file) { return file.type.startsWith('image/') ? 'image' : 'video'; }
+  function releasePreviews() {
+    for (const item of attachments) if (item.preview) URL.revokeObjectURL(item.preview);
+  }
+  function renderMedia() {
+    mediaList.replaceChildren();
+    if (!attachments.length) {
+      const empty = document.createElement('p');
+      empty.textContent = 'No photos or videos attached.';
+      mediaList.append(empty);
+      return;
+    }
+    for (const item of attachments) {
+      const card = document.createElement('div');
+      card.className = 'media-item';
+      const url = item.preview || item.url;
+      const preview = document.createElement(item.type === 'image' ? 'img' : 'video');
+      preview.src = url;
+      preview.preload = 'metadata';
+      if (item.type === 'video') { preview.controls = true; preview.playsInline = true; }
+      else preview.alt = '';
+      const details = document.createElement('span');
+      details.textContent = item.file?.name || item.url.split('/').pop();
+      details.title = details.textContent;
+      const remove = action('Remove', () => {
+        if (item.preview) URL.revokeObjectURL(item.preview);
+        attachments = attachments.filter((candidate) => candidate !== item);
+        renderMedia();
+      }, true);
+      remove.setAttribute('aria-label', `Remove ${details.textContent}`);
+      card.append(preview, details, remove);
+      mediaList.append(card);
+    }
+  }
+  mediaInput.addEventListener('change', () => {
+    for (const file of mediaInput.files) {
+      const max = mediaKind(file) === 'image' ? IMAGE_LIMIT : VIDEO_LIMIT;
+      if (!allowed.has(file.type) || !file.size || file.size > max) {
+        message(`Skipped "${file.name}": use JPEG/PNG/WebP (max 15 MB) or MP4/WebM (max 90 MB).`, 'error');
+        continue;
+      }
+      attachments.push({ type: mediaKind(file), file, preview: URL.createObjectURL(file) });
+    }
+    mediaInput.value = '';
+    renderMedia();
+  });
   let posts = [];
   let filter = 'active';
 
@@ -18,15 +70,21 @@
     return data;
   }
   function resetForm() {
-    form.reset(); field('id').value = ''; field('image_url').value = '';
-    imageNote.textContent = 'No image selected.';
+    releasePreviews();
+    attachments = [];
+    form.reset();
+    field('id').value = '';
+    renderMedia();
     document.getElementById('editor-heading').textContent = 'New update';
     panel.hidden = true;
   }
   function editPost(post) {
-    for (const name of ['id', 'title_en', 'title_sw', 'body_en', 'body_sw', 'image_url', 'status']) field(name).value = post[name] || '';
-    field('image').value = '';
-    imageNote.textContent = post.image_url ? `Current image: ${post.image_url}` : 'No image selected.';
+    releasePreviews();
+    for (const name of ['id', 'title_en', 'title_sw', 'body_en', 'body_sw', 'status']) field(name).value = post[name] || '';
+    attachments = (post.media?.length ? post.media : post.image_url ? [{ url: post.image_url, type: 'image' }] : [])
+      .map((item) => ({ url: item.url, type: item.type }));
+    mediaInput.value = '';
+    renderMedia();
     document.getElementById('editor-heading').textContent = 'Edit update';
     panel.hidden = false;
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -100,10 +158,20 @@
     event.preventDefault();
     const submit = form.querySelector('[type=submit]'); submit.disabled = true; message('Saving update…');
     try {
-      const file = field('image').files[0]; let imageUrl = field('image_url').value;
-      if (file) { const upload = new FormData(); upload.append('image', file); imageUrl = (await api('/admin/api/uploads', { method: 'POST', body: upload })).image_url; }
+      for (let i = 0; i < attachments.length; i++) {
+        const item = attachments[i];
+        if (!item.file) continue;
+        message(`Uploading media ${i + 1} of ${attachments.length}…`);
+        const result = await api('/admin/api/uploads', {
+          method: 'POST', headers: { 'Content-Type': item.file.type, 'X-File-Size': String(item.file.size) }, body: item.file
+        });
+        item.url = result.media_url;
+        item.file = null;
+      }
       const post = Object.fromEntries(['title_en', 'title_sw', 'body_en', 'body_sw', 'status'].map((name) => [name, field(name).value]));
-      post.image_url = imageUrl; const id = field('id').value;
+      post.media = attachments.map((item) => ({ url: item.url, type: item.type }));
+      post.image_url = post.media.find((item) => item.type === 'image')?.url || '';
+      const id = field('id').value;
       await api(id ? `/admin/api/posts/${encodeURIComponent(id)}` : '/admin/api/posts', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(post) });
       resetForm(); await load(); message('Update saved. Published posts are live now.', 'success');
     } catch (error) { message(error.message || 'Could not save update.', 'error'); }
@@ -116,5 +184,6 @@
     document.querySelectorAll('[data-filter]').forEach((item) => item.classList.toggle('active', item === button));
     renderList();
   }));
+  renderMedia();
   load().catch((error) => message(`${error.message} Check Cloudflare Access, Pages bindings and the 0002 migration.`, 'error'));
 })();
