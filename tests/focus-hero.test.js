@@ -14,7 +14,7 @@ test('Our Focus has an actual optimized agriculture hero asset committed in the 
 
 test('Focus hero uses photo with a dark green gradient and mobile readability overlay', async () => {
   const css = await read('assets/css/pages.css');
-  assert.match(css, /\\.mao-page-hero--focus\\{background:linear-gradient/);
+  assert.ok(css.includes('.mao-page-hero--focus{background:linear-gradient'));
   assert.ok(css.includes("url('../img/focus-farming-hero.avif') center 48%/cover no-repeat"));
   assert.ok(css.includes('background-color:#112b20'));
   assert.ok(css.includes('@media(max-width:700px){.mao-page-hero--focus{background-image:linear-gradient'));
