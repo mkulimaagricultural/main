@@ -29,8 +29,13 @@ test('homepage promotes business contact emails and Donate shows donation addres
   assert.ok(donate.includes('mailto:donation@mkulimaagricultural.org'));
 });
 
-test('existing contact email remains in all three public contact sections', async () => {
-  for (const path of ['index.html', 'contact/index.html', 'donate/index.html']) {
+test('old Gmail address is hidden on Home but preserved on Contact and Donate', async () => {
+  const home = await text('index.html');
+  assert.ok(!home.includes('mkulimaagricultural@gmail.com'));
+  assert.ok(home.includes('href="mailto:info@mkulimaagricultural.org"'));
+  assert.ok(home.includes('href="mailto:help@mkulimaagricultural.org"'));
+  assert.ok(home.includes('P.O. Box 149, Mbeya, Tanzania'));
+  for (const path of ['contact/index.html', 'donate/index.html']) {
     const html = await text(path);
     assert.ok(html.includes('href="mailto:mkulimaagricultural@gmail.com"'), path);
   }
