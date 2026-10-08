@@ -1,7 +1,7 @@
 import { json, parsePostRequest } from '../../../../lib/posts.js';
 
 export async function onRequestPut({ request, env, data, params }) {
-  if (data.admin.role !== 'poster') return json({ error: 'Posting permission required.' }, 403);
+  if (data.admin.role !== 'admin') return json({ error: 'Admin permission required.' }, 403);
   if (!env.DB) return json({ error: 'CMS database is not configured.' }, 503);
   if (!/^[a-zA-Z0-9-]{1,64}$/.test(params.id)) return json({ error: 'Invalid post ID.' }, 400);
   const { post, error } = await parsePostRequest(request);

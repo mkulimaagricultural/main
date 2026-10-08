@@ -14,7 +14,7 @@ export async function onRequestGet({ env, data }) {
 }
 
 export async function onRequestPost({ request, env, data }) {
-  if (data.admin.role !== 'poster') return json({ error: 'Posting permission required.' }, 403);
+  if (data.admin.role !== 'admin') return json({ error: 'Admin permission required.' }, 403);
   if (!env.DB) return json({ error: 'CMS database is not configured.' }, 503);
   const { post, error } = await parsePostRequest(request);
   if (error) return json({ error }, 400);

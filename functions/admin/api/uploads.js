@@ -8,7 +8,7 @@ function detectedType(bytes) {
 }
 
 export async function onRequestPost({ request, env, data }) {
-  if (data.admin.role !== 'poster') return json({ error: 'Posting permission required.' }, 403);
+  if (data.admin.role !== 'admin') return json({ error: 'Admin permission required.' }, 403);
   if (!env.MEDIA) return json({ error: 'Image storage is not configured.' }, 503);
   if (!request.headers.get('Content-Type')?.startsWith('multipart/form-data')) return json({ error: 'Send an image file.' }, 400);
   if (Number(request.headers.get('Content-Length') || 0) > 5_200_000) return json({ error: 'Choose an image under 5 MB.' }, 413);

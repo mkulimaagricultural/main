@@ -22,21 +22,21 @@ function token(email, changes = {}) {
 
 const env = {
   ACCESS_AUD: 'mao-audience', ACCESS_TEAM_DOMAIN: 'https://mao.cloudflareaccess.com',
-  MAO_POSTER_EMAILS: 'poster@example.org', MAO_REVIEWER_EMAILS: 'reviewer@example.org'
+  MAO_ADMIN_EMAILS: 'first@example.org,second@example.org'
 };
 const request = (jwt) => new Request('https://example.org/admin/api/posts', { headers: { 'CF-Access-Jwt-Assertion': jwt } });
 
-test('signed Access tokens grant distinct poster and reviewer roles', async () => {
-  assert.deepEqual(await getAdminRole(request(token('poster@example.org')), env), { role: 'poster', email: 'poster@example.org' });
-  assert.deepEqual(await getAdminRole(request(token('reviewer@example.org')), env), { role: 'reviewer', email: 'reviewer@example.org' });
+test('signed Access tokens grant both listed emails identical admin rights', async () => {
+  assert.deepEqual(await getAdminRole(request(token('first@example.org')), env), { role: 'admin', email: 'first@example.org' });
+  assert.deepEqual(await getAdminRole(request(token('second@example.org')), env), { role: 'admin', email: 'second@example.org' });
 });
 
 test('missing, altered and wrong-audience tokens fail closed', async () => {
   assert.equal(await getAdminRole(new Request('https://example.org/admin/api/posts'), env), null);
-  assert.equal(await getAdminRole(request(token('poster@example.org').slice(0, -3) + 'xxx'), env), null);
-  assert.equal(await getAdminRole(request(token('poster@example.org', { aud: ['another-app'] })), env), null);
+  assert.equal(await getAdminRole(request(token('first@example.org').slice(0, -3) + 'xxx'), env), null);
+  assert.equal(await getAdminRole(request(token('first@example.org', { aud: ['another-app'] })), env), null);
   assert.equal(await getAdminRole(request(token('unknown@example.org')), env), null);
-  assert.equal(await getAdminRole(request(token('poster@example.org')), { ...env, ACCESS_AUD: '' }), null);
+  assert.equal(await getAdminRole(request(token('first@example.org')), { ...env, ACCESS_AUD: '' }), null);
 });
 
 test('writes require the same origin', () => {

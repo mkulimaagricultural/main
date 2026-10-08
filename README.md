@@ -12,7 +12,7 @@ Maudhui ya shirika yametolewa kwenye *MAO KATIBA 2.docx*, toleo la kwanza la 202
 
 ## CMS ya updates
 
-Dashboard iko `/admin/`. Kila post ina kichwa na maelezo ya English/Kiswahili, picha ya hiari, na hali ya draft au published. Akaunti ya `poster` inaweza kuandika, kubadilisha na kuchapisha. Akaunti ya `reviewer` inaweza kusoma posts kwenye dashboard; haiwezi kubadilisha wala kuchapisha. Barua pepe za akaunti hizi huwekwa katika Cloudflare environment variables, si kwenye repo hii ya umma.
+Dashboard iko `/admin/`. Kila post ina kichwa na maelezo ya English/Kiswahili, picha ya hiari, na hali ya draft au published. Admin wote wawili wana ruhusa sawa ya kuona, kuandika, kubadilisha, kupakia picha na kuchapisha posts. Barua pepe zao huwekwa katika Cloudflare environment variable, si kwenye repo hii ya umma.
 
 Endpoints za admin zinaangalia JWT iliyosainiwa na Cloudflare Access, audience, muda wa token, na barua pepe iliyoorodheshwa kwenye role husika. Cloudflare Access app pia lazima ilinde njia `/admin/*`. Hakuna password inayohifadhiwa kwenye tovuti. Upatikanaji wa picha ni kupitia R2; data za posts ni kupitia D1.
 
@@ -21,8 +21,8 @@ Endpoints za admin zinaangalia JWT iliyosainiwa na Cloudflare Access, audience, 
 1. Unganisha GitHub repo `mkulimaagricultural/main` na Cloudflare Pages. Production branch: `main`; build command: `npm run build`; output directory: `dist`. Build huchapisha `index.html`, `admin/`, `assets/`, na `_routes.json` pekee. `functions/` zinabundle kama Pages Functions. `_routes.json` huita Functions kwa `/api/*` na `/admin/api/*` tu.
 2. Tengeneza D1 database, kwa mfano `mao-updates`, na R2 bucket, kwa mfano `mao-media`. Ongeza bindings kwa Pages project: D1 variable `DB`, R2 variable `MEDIA`. Tumia `migrations/0001_posts.sql` mara moja kwenye D1 database. Hii inaongeza post ya kwanza iliyotolewa na MAo.
 3. Katika Cloudflare Zero Trust, tengeneza Access self-hosted application kwa hostname ya tovuti na path `/admin/*`. Ruhusu barua pepe mbili zilizoidhinishwa na MAo kutumia login ya email OTP au identity provider inayofaa. Hakikisha protection inatumika pia kwenye preview domains kama utazitumia.
-4. Katika Pages project environment variables, weka `ACCESS_TEAM_DOMAIN` (mfano `https://team-name.cloudflareaccess.com`), `ACCESS_AUD` (Application Audience tag ya Access app), `MAO_POSTER_EMAILS`, na `MAO_REVIEWER_EMAILS`. Tumia email za kila role zinazotolewa na MAo; thamani nyingi zitenganishwe kwa koma. Kwa usalama, ziweke kama secret ikiwa dashboard inatoa chaguo hilo. Weka values kwenye production na preview environments pale zinapohitajika.
-5. Baada ya bindings na variables kuwekwa, redeploy Pages project, kisha pima akaunti zote mbili kwenye `/admin/`: poster aone editor na aweze kuchapisha; reviewer aone posts bila editor. Pima public updates katika English na Kiswahili. Unganisha custom domain `mkulimaagricultural.org` baada ya QA.
+4. Katika Pages project environment variables, weka `ACCESS_TEAM_DOMAIN` (mfano `https://team-name.cloudflareaccess.com`), `ACCESS_AUD` (Application Audience tag ya Access app), na `MAO_ADMIN_EMAILS`. Weka email zote mbili za admin zilizotolewa na MAo kwenye `MAO_ADMIN_EMAILS`, zikitenganishwa kwa koma. Kwa usalama, ziweke kama secret ikiwa dashboard inatoa chaguo hilo. Weka values kwenye production na preview environments pale zinapohitajika.
+5. Baada ya bindings na variables kuwekwa, redeploy Pages project, kisha pima akaunti zote mbili kwenye `/admin/`: kila mmoja aone editor na aweze kuchapisha. Pima public updates katika English na Kiswahili. Unganisha custom domain `mkulimaagricultural.org` baada ya QA.
 
 Kwa local development, `npm test` huendesha majaribio ya JWT na validation; `npm run build` hutengeneza `dist/`. Static preview pekee haiwezi kuthibitisha login au kuhifadhi posts bila Cloudflare bindings.
 

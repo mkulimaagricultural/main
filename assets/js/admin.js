@@ -65,7 +65,7 @@
       sw.textContent = `Kiswahili: ${post.body_sw}`;
       details.append(summary, en, sw);
       item.append(title, badge, details);
-      if (role === 'poster') {
+      if (role === 'admin') {
         const edit = document.createElement('button');
         edit.type = 'button';
         edit.textContent = 'Edit';
@@ -81,15 +81,15 @@
     role = data.role;
     posts = data.posts;
     workspace.hidden = false;
-    panel.hidden = role !== 'poster';
-    newButton.hidden = role !== 'poster';
+    panel.hidden = role !== 'admin';
+    newButton.hidden = role !== 'admin';
     renderList();
-    message(role === 'poster' ? 'Posting access is ready.' : 'Review access is ready. Editing is disabled.', 'success');
+    message('Admin access is ready.', 'success');
   }
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (role !== 'poster') return;
+    if (role !== 'admin') return;
     const submit = form.querySelector('[type=submit]');
     submit.disabled = true;
     message('Saving post…');
