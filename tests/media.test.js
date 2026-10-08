@@ -4,6 +4,30 @@ import { validatePost, loadPostMedia } from '../lib/posts.js';
 import { onRequestPost, IMAGE_LIMIT, VIDEO_LIMIT } from '../functions/admin/api/uploads.js';
 import { onRequestGet as serveMedia } from '../functions/api/media/[key].js';
 
+// Node's test runner does not expose the Workers FixedLengthStream primitive.
+const originalFixedLengthStream = globalThis.FixedLengthStream;
+globalThis.FixedLengthStream = class FixedLengthStream {
+  constructor(expectedSize) {
+    let written = 0;
+    const stream = new TransformStream({
+      transform(chunk, controller) {
+        written += chunk.byteLength;
+        if (written > expectedSize) throw new Error('Too many bytes');
+        controller.enqueue(chunk);
+      },
+      flush() {
+        if (written !== expectedSize) throw new Error('Too few bytes');
+      }
+    });
+    this.readable = stream.readable;
+    this.writable = stream.writable;
+  }
+};
+test.after(() => {
+  if (originalFixedLengthStream === undefined) delete globalThis.FixedLengthStream;
+  else globalThis.FixedLengthStream = originalFixedLengthStream;
+});
+
 const valid = { title_en: 'New update', title_sw: 'Taarifa', body_en: 'English body',
   body_sw: 'Maelezo', status: 'draft', image_url: '' };
 const photo = '/api/media/12345678-1234-1234-1234-123456789abc.jpg';
@@ -51,7 +75,7 @@ function mp4Bytes() {
   return Uint8Array.from([0, 0, 0, 24, 102, 116, 121, 112, 105, 115, 111, 109, 0, 0, 0, 0]);
 }
 function makeRequest(type, bytes, sizeOverride) {
-  const headers = { 'Content-Type': type };
+  const headers = { 'Content-Type': type, 'X-File-Size': String(sizeOverride ?? bytes.byteLength) };
   if (sizeOverride !== undefined) headers['Content-Length'] = String(sizeOverride);
   return new Request('https://admin.mkulimaagricultural.org/admin/api/uploads', {
     method: 'POST', headers, body: bytes, duplex: 'half'
