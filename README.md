@@ -27,6 +27,16 @@ Endpoints za admin zinaangalia hostname na JWT iliyosainiwa na Cloudflare Access
 
 Kwa local development, `npm test` huendesha majaribio ya JWT na validation; `npm run build` hutengeneza `dist/`. Static preview haiwezi kuthibitisha login au kuhifadhi posts bila Cloudflare bindings. Public API ina fallback ya kusoma posts zilizopo wakati `0002_cms.sql` haijaendeshwa, ili deployment isikatishe public updates.
 
+## Picha nyingi na video (migration 0003)
+
+Ili kuanzisha media nyingi kwa kila post, endesha `migrations/0003_post_media.sql` katika Cloudflare D1 `mao-updates` **baada** ya migration 0002. Migration hii inaunda `post_media`, inahifadhi `posts.image_url` kwa compatibility, na inahamisha picha zilizopo kwenye jedwali jipya bila kuzifuta. Inaweza kuendeshwa tena kwa usalama.
+
+Kwenye MAo Studio, chagua picha nyingi kwa wakati mmoja au ongeza mara kwa mara; hakuna limit ya idadi ya picha kwa post iliyowekwa na CMS. JPEG/PNG/WebP: kila picha <= 15,000,000 bytes (15 MB). MP4/WebM: kila video <= 90,000,000 bytes (90 MB). Files zinapakiwa moja baada ya nyingine kwa stream kwenda R2; sio lazima kuhifadhi video yote kwenye memory ya Worker. Kiasi cha jumla cha picha kinategemea storage na resource za cloud (sio unlimited storage).
+
+Frontend hutuma `media` array ya vitu vya aina `{url, type}` na API inahifadhi mpangilio wake. Mfumo wa zamani wa `image_url` na post ya kwanza unabaki, na legacy API clients zinazotuma picha moja pekee bado zinafanya kazi. Public homepage inaonyesha cover image au video, ukurasa wa kila taarifa unaonyesha media zote na video controls. Media endpoint inaruhusu HTTP Range requests kwa video.
+
+**Muundo wa hatua za rollout:** endesha 0003 D1 migration kwanza, ndipo deploy frontend/backend mpya kwenye Pages. Kabla ya migration, static legacy image posts zitaonekana lakini editing mpya yenye attachments inaweza kukataliwa. Hakuna haja ya kubadilisha D1/R2 bindings au Access settings.
+
 ## Asili ya muonekano
 
 CSS na JavaScript vya msingi vimetoka kwenye [Charitize NGO HTML template](https://github.com/uiuxlabz/charity-html-template). README ya mradi huo inaruhusu matumizi binafsi na ya kibiashara, na inasema attribution inathaminiwa lakini si lazima. Muundo na maudhui vimebadilishwa kwa MAo. Kagua masharti ya template tena kabla ya uchapishaji wa mwisho.
