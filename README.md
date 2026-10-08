@@ -6,6 +6,8 @@ Lugha ya mwanzo ni English. Kichagua lugha kwenye navigation hubadilisha maudhui
 
 Typography: maandishi yote yasiyo headings hutumia Inter, ikiwa ni pamoja na lebo ndogo, namba za kadi na anuani. Headings zimebakia Fraunces. Sheria hizi ni zilezile kwa upana wote wa vifaa.
 
+Heading, maelezo na vitufe vya sehemu ya mwanzo vinaingia kwa mpangilio mfupi vinapoonekana. Animation inacheza mara moja tu, na inazimwa kwa kifaa kilichoweka `prefers-reduced-motion: reduce`.
+
 Maudhui ya shirika yametolewa kwenye *MAO KATIBA 2.docx*, toleo la kwanza la 2024. Hakuna takwimu za athari, matukio, majina ya viongozi, taarifa za mawasiliano, au miradi iliyotekelezwa iliyobuniwa. Sehemu ya updates inaonyesha hali tupu hadi taarifa halisi zichapishwe.
 
 ## Asili ya muonekano
