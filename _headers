@@ -1,0 +1,16 @@
+# Static Cloudflare Pages responses. Keep in sync with lib/security.js.
+/*
+  Content-Security-Policy: frame-ancestors 'none'
+  Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; form-action 'self'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+
+# HSTS on approved HTTPS custom domains only; no includeSubDomains/preload.
+https://www.mkulimaagricultural.org/*
+  Strict-Transport-Security: max-age=15552000
+
+https://mkulimaagricultural.org/*
+  Strict-Transport-Security: max-age=15552000
+
+https://admin.mkulimaagricultural.org/*
+  Strict-Transport-Security: max-age=15552000
