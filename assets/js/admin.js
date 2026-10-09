@@ -60,10 +60,46 @@
   let posts = [];
   let filter = 'active';
   let editingPost = null;
+  let localDraft = null;
+  let draftStorageKey = '';
 
   function message(value, kind = '') { status.textContent = value; status.dataset.kind = kind; status.hidden = !value; }
   function field(name) { return form.elements.namedItem(name); }
   function date(value) { return value ? new Date(value).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' }) : '—'; }
+  function readLocalDraft() {
+    try {
+      const saved = JSON.parse(window.localStorage?.getItem(draftStorageKey) || 'null');
+      return saved && typeof saved.title === 'string' && typeof saved.description === 'string'
+        && ['en', 'sw'].includes(saved.source_lang) ? saved : null;
+    } catch { return null; }
+  }
+  function clearLocalDraft() {
+    try { window.localStorage?.removeItem(draftStorageKey); } catch { /* Storage may be unavailable. */ }
+    localDraft = null;
+  }
+  function updateSummary() {
+    const active = posts.filter((post) => !post.deleted_at);
+    document.getElementById('nav-count').textContent = active.length + (localDraft ? 1 : 0);
+    document.getElementById('stat-published').textContent = active.filter((post) => post.status === 'published').length;
+    document.getElementById('stat-drafts').textContent = active.filter((post) => post.status === 'draft').length + (localDraft ? 1 : 0);
+    document.getElementById('stat-views').textContent = active.reduce((sum, post) => sum + Number(post.view_count || 0), 0).toLocaleString();
+  }
+  function persistLocalDraft() {
+    if (!draftStorageKey || editingPost || field('id').value) return;
+    const title = field('title').value;
+    const description = field('description').value;
+    if (!title.trim() && !description.trim()) clearLocalDraft();
+    else {
+      localDraft = { title, description, source_lang: field('source_lang').value, updated_at: new Date().toISOString() };
+      try { window.localStorage?.setItem(draftStorageKey, JSON.stringify(localDraft)); }
+      catch { message('Automatic draft saving is unavailable in this browser. Use Save draft before leaving.', 'error'); }
+    }
+    document.getElementById('draft-note').textContent = localDraft
+      ? 'Unfinished draft saved on this device. Reselect photos or videos if you close this tab.'
+      : 'Unfinished writing is saved on this device as you type. Reselect photos or videos if you close this tab.';
+    updateSummary();
+    renderList();
+  }
   async function api(url, options = {}) {
     const response = await fetch(url, { ...options, headers: { Accept: 'application/json', ...(options.headers || {}) } });
     const data = await response.json().catch(() => ({}));
@@ -78,6 +114,9 @@
     editingPost = null;
     renderMedia();
     document.getElementById('editor-heading').textContent = 'New update';
+    document.getElementById('draft-note').textContent = 'Unfinished writing is saved on this device as you type. Reselect photos or videos if you close this tab.';
+    document.getElementById('save-draft').textContent = 'Save draft';
+    document.getElementById('publish-update').textContent = 'Publish update';
     panel.hidden = true;
   }
   function editPost(post) {
@@ -87,17 +126,19 @@
     field('source_lang').value = 'en';
     field('title').value = post.title_en || '';
     field('description').value = post.body_en || '';
-    field('status').value = post.status || 'draft';
     attachments = (post.media?.length ? post.media : post.image_url ? [{ url: post.image_url, type: 'image' }] : [])
       .map((item) => ({ url: item.url, type: item.type }));
     mediaInput.value = '';
     renderMedia();
     document.getElementById('editor-heading').textContent = 'Edit update';
+    document.getElementById('draft-note').textContent = 'Changes to this update are saved when you choose one of the buttons below.';
+    document.getElementById('save-draft').textContent = post.status === 'published' ? 'Unpublish & save draft' : 'Save draft';
+    document.getElementById('publish-update').textContent = post.status === 'published' ? 'Save & keep published' : 'Publish update';
     panel.hidden = false;
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   field('source_lang').addEventListener('change', () => {
-    if (!editingPost) return;
+    if (!editingPost) { persistLocalDraft(); return; }
     const language = field('source_lang').value;
     field('title').value = editingPost[`title_${language}`] || '';
     field('description').value = editingPost[`body_${language}`] || '';
@@ -129,7 +170,19 @@
   function renderList() {
     list.replaceChildren();
     const visible = posts.filter((post) => filter === 'trash' ? !!post.deleted_at : !post.deleted_at);
-    if (!visible.length) {
+    if (filter === 'active' && localDraft) {
+      const row = document.createElement('tr');
+      const title = document.createElement('div'); title.className = 'post-title'; title.textContent = localDraft.title.trim() || 'Untitled draft';
+      const subtitle = document.createElement('div'); subtitle.className = 'local-draft-note'; subtitle.textContent = 'Unfinished · saved on this device only';
+      cell(row).append(title, subtitle);
+      const badge = document.createElement('span'); badge.className = 'pill draft'; badge.textContent = 'Draft'; cell(row, badge);
+      cell(row, '—'); cell(row, '—'); cell(row, `${date(localDraft.updated_at)} · this device`);
+      const actions = document.createElement('div'); actions.className = 'row-actions';
+      actions.append(action('Resume', resumeLocalDraft));
+      actions.append(action('Discard', discardLocalDraft, true));
+      cell(row, actions); list.append(row);
+    }
+    if (!visible.length && !(filter === 'active' && localDraft)) {
       const row = document.createElement('tr'); cell(row, filter === 'trash' ? 'Trash is empty.' : 'No updates yet.', 'empty-row').colSpan = 6; list.append(row); return;
     }
     for (const post of visible) {
@@ -157,19 +210,30 @@
   async function load() {
     const data = await api('/admin/api/posts');
     posts = data.posts;
+    if (!draftStorageKey && data.email) {
+      draftStorageKey = `mao-studio-new-draft-v1:${data.email.toLowerCase()}`;
+      localDraft = readLocalDraft();
+    }
     workspace.hidden = false;
     document.getElementById('new-post').hidden = false;
     document.getElementById('admin-email').textContent = data.email || 'Secure admin area';
-    const active = posts.filter((post) => !post.deleted_at);
-    document.getElementById('nav-count').textContent = active.length;
-    document.getElementById('stat-published').textContent = active.filter((post) => post.status === 'published').length;
-    document.getElementById('stat-drafts').textContent = active.filter((post) => post.status === 'draft').length;
-    document.getElementById('stat-views').textContent = active.reduce((sum, post) => sum + Number(post.view_count || 0), 0).toLocaleString();
+    updateSummary();
     renderList(); message('');
   }
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const submit = form.querySelector('[type=submit]'); submit.disabled = true; message('Saving update…');
+    const intent = event.submitter?.value === 'published' ? 'published' : 'draft';
+    if (intent === 'draft' && (!field('title').value.trim() || !field('description').value.trim())) {
+      if (!field('title').value.trim() && !field('description').value.trim()) {
+        message('Write a title or description before saving a draft.', 'error');
+        return;
+      }
+      persistLocalDraft();
+      message('Incomplete draft saved on this device. Add a title and description to save it for both admins.', 'success');
+      return;
+    }
+    if (!form.reportValidity()) return;
+    const submit = event.submitter || form.querySelector('[type=submit]'); submit.disabled = true; message('Saving update…');
     try {
       for (let i = 0; i < attachments.length; i++) {
         const item = attachments[i];
@@ -181,12 +245,14 @@
         item.url = result.media_url;
         item.file = null;
       }
-      const post = Object.fromEntries(['title', 'description', 'source_lang', 'status'].map((name) => [name, field(name).value]));
+      const post = Object.fromEntries(['title', 'description', 'source_lang'].map((name) => [name, field(name).value]));
+      post.status = intent;
       post.media = attachments.map((item) => ({ url: item.url, type: item.type }));
       post.image_url = post.media.find((item) => item.type === 'image')?.url || '';
       const id = field('id').value;
       message('Translating and saving update…');
       await api(id ? `/admin/api/posts/${encodeURIComponent(id)}` : '/admin/api/posts', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(post) });
+      if (!id) clearLocalDraft();
       resetForm(); await load();
       message(post.status === 'published' ? 'Update published. It is live on the website.' : 'Draft saved. It is not visible on the public website.', 'success');
     } catch (error) { message(error.message || 'Could not save update.', 'error'); }
@@ -194,10 +260,28 @@
   });
   function openNewPost(event) {
     event?.preventDefault();
+    if (localDraft) { resumeLocalDraft(); return; }
     resetForm();
     panel.hidden = false;
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  function resumeLocalDraft() {
+    if (!localDraft) return;
+    resetForm();
+    field('source_lang').value = localDraft.source_lang;
+    field('title').value = localDraft.title;
+    field('description').value = localDraft.description;
+    document.getElementById('draft-note').textContent = 'Unfinished draft restored from this device. Reselect photos or videos if needed.';
+    panel.hidden = false;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function discardLocalDraft() {
+    if (!confirm('Discard the unfinished draft saved on this device? This cannot be undone.')) return;
+    clearLocalDraft();
+    if (!editingPost && !panel.hidden) resetForm();
+    updateSummary(); renderList(); message('Unfinished draft discarded.', 'success');
+  }
+  form.addEventListener('input', persistLocalDraft);
   document.getElementById('new-post').addEventListener('click', openNewPost);
   document.getElementById('write-update-link').addEventListener('click', openNewPost);
   document.getElementById('cancel-edit').addEventListener('click', resetForm);

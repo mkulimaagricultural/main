@@ -50,7 +50,7 @@ test('Admin introduction is only MAo emblem and Studio, never a second sidebar o
   assert.ok(!overlay[1].includes('Mkulima Agricultural Organization'));
   assert.ok(!overlay[1].includes('MAo</strong>'));
   assert.ok(admin.indexOf('<script src="/assets/js/studio-intro.js?v=1"></script>') < admin.indexOf('<body>'));
-  assert.ok(admin.includes('href="/assets/css/admin.css?v=studio-intro-1"'));
+  assert.ok(admin.includes('href="/assets/css/admin.css?v=editor-drafts-1"'));
   assert.ok(admin.includes('id="admin-workspace"'));
   assert.ok(admin.includes('id="write-update-link"'));
   assert.ok(admin.includes('class="brand-wordmark__studio">Studio</strong>'));

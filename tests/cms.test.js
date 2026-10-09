@@ -87,7 +87,7 @@ test('real sidebar and New update clicks open editor; deep link opens after load
   const page = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
   const script = await readFile(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
   assert.match(page, /id="write-update-link" href="\/admin\/\?compose=1#editor-panel"/);
-  assert.match(page, /admin\.js\?v=20261009-single-editor/);
+  assert.match(page, /admin\.js\?v=editor-drafts-1/);
 
   const simulate = async (search = '') => {
     const nodes = new Map();
@@ -165,7 +165,7 @@ test('MAo Studio keeps emblem and uses Libre Caslon regular MAo plus bold Studio
   assert.ok(brand[1].includes('<span class="brand-wordmark"><span class="brand-wordmark__mao">MAo</span><strong class="brand-wordmark__studio">Studio</strong></span>'));
   assert.ok(!brand[1].includes('<small'));
   assert.ok(!brand[1].includes('Mkulima Agricultural Organization'));
-  assert.ok(html.includes('href="/assets/css/admin.css?v=studio-intro-1"'));
+  assert.ok(html.includes('href="/assets/css/admin.css?v=editor-drafts-1"'));
   assert.ok(html.includes('id="write-update-link"'));
   assert.ok(html.includes('id="new-post"'));
   assert.ok(html.includes('<link rel="icon" href="/assets/img/mao-logo.png">'));
