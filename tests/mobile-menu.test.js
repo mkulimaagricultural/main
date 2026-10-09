@@ -22,7 +22,7 @@ test('mobile menu stacks outlined Donate above blue Contact button on all public
     assert.ok(mobile.includes('<span data-i18n="navDonate">Donate</span>'), path);
     assert.ok(mobile.includes('<span data-i18n="navContact">Contact us</span>'), path);
     assert.ok(mobile.includes('class="nav__donate-icon"'), 'preserve requested Donate heart: ' + path);
-    assert.ok(html.includes('mao.css?v=mobile-actions-1'), 'cache-bust missing: ' + path);
+    assert.ok(html.includes('mao.css?v=mobile-all-buttons-2'), 'cache-bust missing: ' + path);
     assert.ok(html.includes('class="mao-language-control"'), 'preserve language switch: ' + path);
     assert.ok(html.includes('class="nav__toggle"'), 'preserve menu toggle: ' + path);
   }
@@ -49,6 +49,29 @@ test('desktop navigation remains unchanged while mobile CTA duplicates are hidde
   assert.ok(css.includes('linear-gradient(110deg,#0864c9,#04afe2)'));
   assert.ok(css.includes('min-height:68px'));
   assert.ok(css.includes('.nav:has(.nav__links--open) .mao-language-control{visibility:hidden;pointer-events:none}'));
+});
+
+test('About, Our Focus and Updates match the mobile outline buttons, without active underline', async () => {
+  const css = await read('assets/css/mao.css');
+  const mobileRules = css.slice(css.indexOf('/* Mobile navigation: stacked call-to-action buttons'));
+  assert.ok(mobileRules.includes('gap:1rem;overflow-y:auto;overscroll-behavior:contain'),
+    'nav uses the same vertical spacing between all five links');
+  assert.match(mobileRules, /\.nav__links > \.nav__link\{[\s\S]*?display:flex;align-items:center;justify-content:center;[\s\S]*?width:100%;min-height:68px;[\s\S]*?border:2px solid #1968c7;border-radius:1\.05rem;/);
+  assert.ok(mobileRules.includes('color:#fff!important;'), 'mobile link text stays readable on dark background');
+  assert.ok(mobileRules.includes('.nav__links > .nav__link::after{display:none!important}'),
+    'old active underline must not appear');
+  assert.ok(mobileRules.includes('border-color:#4aa3ff;'),
+    'active page has a highlighted blue border');
+  assert.ok(mobileRules.includes('width:100%;margin-top:0;padding-top:0'),
+    'Donate and Contact should follow the other buttons without a large empty gap');
+  assert.ok(mobileRules.includes('@media(max-width:350px)'),
+    'compact screen layout must stay usable');
+  for (const path of pages) {
+    const html = await read(path);
+    const links = ['/about/', '/focus/', '/updates/'].map(route => html.indexOf('href="' + route + '" class="nav__link'));
+    assert.ok(links.every(index => index >= 0) && links[0] < links[1] && links[1] < links[2],
+      'preserve navigation order on ' + path);
+  }
 });
 
 test('mobile action buttons close sidebar on click and keep both translation labels', async () => {
