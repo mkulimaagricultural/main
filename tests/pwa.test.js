@@ -37,7 +37,7 @@ test('public pages and article HTML register the public PWA; Studio uses its own
   assert.match(article, /src="\/assets\/js\/pwa-public\.js"/);
   const admin = await source('admin/index.html');
   assert.match(admin, /rel="manifest" href="\/admin\/manifest\.webmanifest"/);
-  assert.match(admin, /src="\/assets\/js\/pwa-admin\.js"/);
+  assert.match(admin, /src="\/assets\/js\/pwa-admin\.js\?v=pwa-install-1"/);
   const registration = await source('assets/js/pwa-admin.js');
   assert.match(registration, /register\('\/admin\/sw\.js', \{ scope: '\/admin\/'/);
 });
