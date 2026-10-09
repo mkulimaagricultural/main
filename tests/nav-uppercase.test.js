@@ -20,7 +20,7 @@ test('all six public pages render Contact as a regular navigation link and prese
     for (const section of ['navAbout', 'navFocus', 'navUpdates', 'navContact', 'navDonate']) {
       assert.ok(html.includes('data-i18n="' + section + '"'), section + ' must remain bilingual in ' + path);
     }
-    assert.ok(html.includes('mao.css?v=' + 'mobile-all-buttons-2'), 'updated CSS not loaded by ' + path);
+    assert.ok(html.includes('mao.css?v=' + 'mobile-terracotta-1'), 'updated CSS not loaded by ' + path);
   }
 });
 
