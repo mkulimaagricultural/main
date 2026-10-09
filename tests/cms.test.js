@@ -165,7 +165,7 @@ test('MAo Studio keeps emblem and uses Libre Caslon regular MAo plus bold Studio
   assert.ok(brand[1].includes('<span class="brand-wordmark"><span class="brand-wordmark__mao">MAo</span><strong class="brand-wordmark__studio">Studio</strong></span>'));
   assert.ok(!brand[1].includes('<small'));
   assert.ok(!brand[1].includes('Mkulima Agricultural Organization'));
-  assert.ok(html.includes('href="/assets/css/admin.css?v=editor-drafts-1"'));
+  assert.ok(html.includes('href="/assets/css/admin.css?v=pwa-install-1"'));
   assert.ok(html.includes('id="write-update-link"'));
   assert.ok(html.includes('id="new-post"'));
   assert.ok(html.includes('<link rel="icon" href="/assets/img/mao-logo.png">'));
