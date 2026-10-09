@@ -4,6 +4,12 @@ Tovuti ya Mkulima Agricultural Organization (MAo) iko kwenye Cloudflare Pages, i
 
 Lugha ya mwanzo ni English. Kichagua lugha kwenye navigation hubadilisha maudhui kati ya English na Kiswahili. Chaguo la mtumiaji huhifadhiwa kwenye browser yake; mtumiaji mpya huona English.
 
+## PWA za website na MAo Studio
+
+Website ya umma ina manifest `/manifest.webmanifest` (scope `/`) na service worker `/sw.js`. Inatumia icon za MAo zenye vipimo vya 192px na 512px, Apple touch icon, pamoja na rangi ya MAo. Kurasa za umma zilizotembelewa na assets zake zinaweza kufunguka bila mtandao; ukurasa ambao haujahifadhiwa unaonyesha `/offline.html`. API na kurasa za taarifa za CMS hazihifadhiwi na service worker, kwa hiyo taarifa mpya zinahitaji mtandao.
+
+MAo Studio ina manifest yake `/admin/manifest.webmanifest` (scope `/admin/`) na service worker `/admin/sw.js`. Inaweza kusakinishwa kama app tofauti, lakini inahitaji mtandao na Cloudflare Access ili kusoma au kuandika posts. Service worker ya Studio haihifadhi kurasa za admin, maudhui ya posts, wala majibu ya `/admin/api/`; ikiwa offline inaonyesha ujumbe wa kuunganishwa tena. Kuingia na kuchapisha kunaendelea kufuata ulinzi wa Access uliopo.
+
 Kurasa za umma ni home `/`, About `/about/`, Our focus `/focus/`, Updates `/updates/`, Contact `/contact/`, na Donate `/donate/`. Navigation ya home inafungua kurasa hizi. Sehemu za home zimebakia vilevile; menyu ina kitufe kipya cha Donate. Kurasa zinatumia mfumo uleule wa lugha na muonekano wa MAo. Ukurasa wa Updates unasoma posts zilizochapishwa kutoka CMS, huku update ya kwanza ikiwa fallback wakati API haipatikani.
 
 Ukurasa wa Donate unaonyesha maelezo ya akaunti ya CRDB yaliyotolewa moja kwa moja na MAo. Ni maelekezo ya bank transfer; tovuti haisindiki malipo mtandaoni. `assets/img/crdb-logo.svg` imetolewa na MAo na hutumika kama nembo ya benki kwenye ukurasa huo. Favicon na branding ya tovuti vinaendelea kutumia nembo ya MAo.

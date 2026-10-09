@@ -14,7 +14,7 @@ for (const directory of ['assets', 'admin', 'about', 'focus', 'updates', 'contac
 await cp(join(root, 'assets', 'img', 'mao-logo.png'), join(dist, 'logo.png'));
 await mkdir(join(dist, 'assets', 'vendor', 'tabler'), { recursive: true });
 await cp(join(root, 'node_modules', '@tabler', 'core', 'dist', 'css', 'tabler.min.css'), join(dist, 'assets', 'vendor', 'tabler', 'tabler.min.css'));
-for (const filename of ['index.html', '_routes.json', '_headers', 'sitemap.xml', 'robots.txt']) {
+for (const filename of ['index.html', 'offline.html', 'manifest.webmanifest', 'sw.js', '_routes.json', '_headers', 'sitemap.xml', 'robots.txt']) {
   await writeFile(join(dist, filename), await readFile(join(root, filename)));
 }
 
