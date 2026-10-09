@@ -7,7 +7,7 @@ const dist = join(root, 'dist');
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 
-for (const directory of ['assets', 'admin', 'about', 'focus', 'updates', 'contact', 'donate']) {
+for (const directory of ['assets', 'admin', 'about', 'focus', 'updates', 'contact', 'donate', 'app']) {
   await cp(join(root, directory), join(dist, directory), { recursive: true });
 }
 // Serve the existing MAo brand image at the public /logo.png URL.
