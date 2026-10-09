@@ -43,6 +43,12 @@ Ili kuanzisha media nyingi kwa kila post, endesha `migrations/0003_post_media.sq
 
 Kwenye MAo Studio, chagua picha nyingi kwa wakati mmoja au ongeza mara kwa mara; hakuna limit ya idadi ya picha kwa post iliyowekwa na CMS. JPEG/PNG/WebP: kila picha <= 15,000,000 bytes (15 MB). MP4/WebM: kila video <= 90,000,000 bytes (90 MB). Files zinapakiwa moja baada ya nyingine kwa stream kwenda R2; sio lazima kuhifadhi video yote kwenye memory ya Worker. Kiasi cha jumla cha picha kinategemea storage na resource za cloud (sio unlimited storage).
 
+## Fomu moja ya post na tafsiri
+
+Editor mpya ina `Written in` (English/Kiswahili), `Post title`, `Description`, media, na hali ya Draft/Published. Admin anaandika lugha moja tu. Pages Function inatumia Cloudflare Workers AI `@cf/meta/m2m100-1.2b` kutafsiri kichwa na maelezo wakati wa kuhifadhi; matoleo yote mawili yanahifadhiwa katika columns zilizopo za D1. Hivyo uchaguzi wa lugha kwenye public site unasoma maandishi yaliyohifadhiwa bila kuita AI kwa kila msomaji. Posts za zamani, pamoja na ile ya waanzilishi, zinabaki kama zilivyo. Kubadili media pekee kwenye post iliyopo hakuitishi tafsiri upya.
+
+Kabla ya kupeleka editor mpya kwenye production, kwenye Pages project `mkulimaagricultural` > Settings > Bindings > Production > Add > Workers AI, weka variable name `AI`, Save, kisha redeploy. Bindings zilizopo `DB` na `MEDIA` zibaki. Binding ya AI ikikosekana au tafsiri ikishindwa, server inarudisha kosa na haiandiki post kwenye D1. Admin akifungua post ya zamani kwa edit, fomu inaonyesha English mwanzoni; akichagua Kiswahili inaonyesha maandishi ya Kiswahili yaliyohifadhiwa. Tafsiri ya mashine inahitaji ukaguzi wa binadamu kabla ya kusambaza taarifa muhimu.
+
 Frontend hutuma `media` array ya vitu vya aina `{url, type}` na API inahifadhi mpangilio wake. Mfumo wa zamani wa `image_url` na post ya kwanza unabaki, na legacy API clients zinazotuma picha moja pekee bado zinafanya kazi. Public homepage inaonyesha cover image au video, ukurasa wa kila taarifa unaonyesha media zote na video controls. Media endpoint inaruhusu HTTP Range requests kwa video.
 
 **Muundo wa hatua za rollout:** endesha 0003 D1 migration kwanza, ndipo deploy frontend/backend mpya kwenye Pages. Kabla ya migration, static legacy image posts zitaonekana lakini editing mpya yenye attachments inaweza kukataliwa. Hakuna haja ya kubadilisha D1/R2 bindings au Access settings.
