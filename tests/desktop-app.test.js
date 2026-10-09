@@ -65,7 +65,7 @@ test('/app has accessible Windows download linked to versioned installer and kee
   assert.ok(page.includes('<title>Download MAo Studio for Windows | MAo</title>'));
   assert.ok(page.includes('<link rel="canonical" href="https://www.mkulimaagricultural.org/app/">'));
   assert.ok(page.includes('id="windows-download"'));
-  assert.ok(page.includes('https://github.com/mkulimaagricultural/main/releases/latest/download/MAo-Studio-Setup-1.0.0.exe'));
+  assert.ok(page.includes('https://github.com/mkulimaagricultural/main/releases/download/mao-studio-v1.0.0/MAo-Studio-Setup-1.0.0.exe'));
   assert.ok(page.includes('https://admin.mkulimaagricultural.org/admin/'));
   assert.ok(page.includes('Cloudflare Access'));
   assert.ok(page.includes('Unknown publisher'));
