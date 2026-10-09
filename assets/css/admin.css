@@ -31,3 +31,15 @@ html.mao-studio-intro-active .mao-studio-intro{display:flex;pointer-events:auto;
   100%{opacity:0;visibility:hidden}
 }
 @media(prefers-reduced-motion:reduce){html.mao-studio-intro-active .mao-studio-intro{display:none!important}}
+
+/* Explicit PWA installation entry point; no changes to CMS or publishing controls. */
+.topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:clamp(.55rem,1.5vw,1.1rem);min-width:0}
+.studio-install-button{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.48rem .8rem;border:1px solid #c8dccc;border-radius:.5rem;background:#ecf4ed;color:#15382b;font-size:.8rem;font-weight:700;line-height:1.2;white-space:nowrap;cursor:pointer}
+.studio-install-button:hover{background:#dbeedf;border-color:#99c5a3}
+.studio-install-button svg{display:block;flex:none}
+.studio-install-button[hidden]{display:none!important}
+.studio-install-help{position:relative;padding:.85rem 3.2rem .85rem clamp(1rem,3vw,2.7rem);background:#edf4ed;border-bottom:1px solid #c8dec9;color:#254d36}
+.studio-install-help[hidden]{display:none!important}
+.studio-install-help p{margin:0;font-size:.85rem;line-height:1.5}
+.studio-install-help-close{position:absolute;top:.55rem;right:clamp(1rem,3vw,2.7rem);border:0;background:transparent;color:#254d36;font-size:1.4rem;line-height:1;cursor:pointer}
+@media(max-width:650px){.topbar{min-height:54px;height:auto;gap:.5rem;padding-block:.6rem;flex-wrap:wrap}.topbar-actions{flex-wrap:wrap;gap:.65rem}.studio-install-button{padding:.5rem .65rem}}
