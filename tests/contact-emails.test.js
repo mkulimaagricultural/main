@@ -54,7 +54,7 @@ test('Contact email directory has semantic rows, wide card, responsive spacing a
   const css = await text('assets/css/pages.css');
   assert.ok(html.includes('class="mao-contact-card mao-contact-card--emails'));
   assert.ok(html.includes('<dl class="mao-contact-email-list">'));
-  assert.ok(html.includes('href="/assets/css/pages.css?v=contact-email-layout-2"'));
+  assert.ok(html.includes('href="/assets/css/pages.css?v=contact-hero-1"'));
   assert.equal(html.split('class="mao-contact-email-item').length - 1, 4);
   for (const address of addresses) {
     assert.ok(html.includes('<dd><a href="mailto:' + address + '">' + address + '</a></dd>'), address);
