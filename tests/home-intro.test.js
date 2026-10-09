@@ -40,12 +40,12 @@ function simulate(source, options = {}) {
 
 test('all six public pages show only the MAo logo, with intro script before body and no extra text', async () => {
   const routes = [
-    ['index.html', 'assets/img/mao-logo.png', 'mobile-all-buttons-2'],
-    ['about/index.html', '/assets/img/mao-logo.png', 'mobile-all-buttons-2'],
-    ['focus/index.html', '/assets/img/mao-logo.png', 'mobile-all-buttons-2'],
-    ['updates/index.html', '/assets/img/mao-logo.png', 'mobile-all-buttons-2'],
-    ['contact/index.html', '/assets/img/mao-logo.png', 'mobile-all-buttons-2'],
-    ['donate/index.html', '/assets/img/mao-logo.png', 'mobile-all-buttons-2']
+    ['index.html', 'assets/img/mao-logo.png', 'mobile-terracotta-1'],
+    ['about/index.html', '/assets/img/mao-logo.png', 'mobile-terracotta-1'],
+    ['focus/index.html', '/assets/img/mao-logo.png', 'mobile-terracotta-1'],
+    ['updates/index.html', '/assets/img/mao-logo.png', 'mobile-terracotta-1'],
+    ['contact/index.html', '/assets/img/mao-logo.png', 'mobile-terracotta-1'],
+    ['donate/index.html', '/assets/img/mao-logo.png', 'mobile-terracotta-1']
   ];
   for (const [path, imageSrc, cssVersion] of routes) {
     const html = await read(path);
