@@ -1,0 +1,33 @@
+plugins {
+    id 'com.android.application'
+}
+android {
+    namespace 'org.mkulimaagricultural.website'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'org.mkulimaagricultural.website'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('MAO_PUBLIC_KEYSTORE') ?: '../build/mao-public-release.jks')
+            storePassword System.getenv('MAO_PUBLIC_STORE_PASSWORD') ?: ''
+            keyAlias System.getenv('MAO_PUBLIC_KEY_ALIAS') ?: 'mao-website'
+            keyPassword System.getenv('MAO_PUBLIC_KEY_PASSWORD') ?: ''
+        }
+    }
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

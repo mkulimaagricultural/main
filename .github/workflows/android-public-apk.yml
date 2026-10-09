@@ -1,0 +1,109 @@
+name: MAo Public Android APK
+
+on:
+  pull_request:
+    paths:
+      - 'android-public/**'
+      - '.github/workflows/android-public-apk.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'android-public/**'
+      - '.github/workflows/android-public-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android-public-release:
+    name: Build signed MAo Website APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+      - name: Install Android SDK platform
+        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Generate MAo launcher icons
+        run: |
+          python3 -m pip install --disable-pip-version-check --user "Pillow>=10,<12"
+          python3 android-public/scripts/generate_icons.py
+      - name: Configure Android signing
+        shell: bash
+        env:
+          SIGNING_KEYSTORE_B64: ${{ secrets.MAO_PUBLIC_ANDROID_KEYSTORE_B64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.MAO_PUBLIC_ANDROID_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.MAO_PUBLIC_ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          mkdir -p android-public/build
+          if [[ -n "$SIGNING_KEYSTORE_B64" && -n "$SIGNING_STORE_PASSWORD" && -n "$SIGNING_KEY_PASSWORD" ]]; then
+            echo "$SIGNING_KEYSTORE_B64" | base64 --decode > android-public/build/mao-public-release.jks
+            echo "Using configured MAo public release signing key."
+            echo "MAO_PUBLIC_STORE_PASSWORD=$SIGNING_STORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "MAO_PUBLIC_KEY_PASSWORD=$SIGNING_KEY_PASSWORD" >> "$GITHUB_ENV"
+          else
+            STOREPASS="$(openssl rand -hex 24)"
+            echo "MAO_PUBLIC_STORE_PASSWORD=$STOREPASS" >> "$GITHUB_ENV"
+            echo "MAO_PUBLIC_KEY_PASSWORD=$STOREPASS" >> "$GITHUB_ENV"
+            keytool -genkeypair -noprompt -v -keystore android-public/build/mao-public-release.jks -alias mao-website -storepass "$STOREPASS" -keypass "$STOREPASS" -keyalg RSA -keysize 3072 -validity 3650 -dname "CN=MAo Website, O=Mkulima Agricultural Organization, C=TZ"
+            echo "::warning::APK is signed with a temporary CI key. Configure permanent MAO_PUBLIC_ANDROID_* signing secrets for upgrade-compatible future versions."
+          fi
+          echo "MAO_PUBLIC_KEYSTORE=$GITHUB_WORKSPACE/android-public/build/mao-public-release.jks" >> "$GITHUB_ENV"
+          echo "MAO_PUBLIC_KEY_ALIAS=mao-website" >> "$GITHUB_ENV"
+      - name: Build signed release APK
+        run: gradle --no-daemon --stacktrace -p android-public :app:assembleRelease
+      - name: Verify release signature and app ID
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android-public/app/build/outputs/apk/release/app-release.apk"
+          test -s "$APK"
+          test "$(stat -c%s "$APK")" -gt 50000
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep "package: name='org.mkulimaagricultural.website'"
+          cp "$APK" android-public/MAo-Android-v1.0.0.apk
+          sha256sum android-public/MAo-Android-v1.0.0.apk
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAo-Public-Android-v1.0.0
+          path: android-public/MAo-Android-v1.0.0.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish official Android download release
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mao-public-android-v1.0.0
+          name: MAo Website for Android — v1.0.0
+          target_commitish: main
+          make_latest: false
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: android-public/MAo-Android-v1.0.0.apk
+          body: |
+            Official MAo public Android app v1.0.0, for Android 8.0 or newer.
+            Opens the public Mkulima Agricultural Organization website.
+            No MAo Studio CMS access is included. Requires an internet connection.
+
+            Direct sideload APK — not distributed through Google Play.
+            Verify the file comes from the official MAo website or GitHub release.
+            Follow Android device security prompts; do not disable Play Protect.
+
+            IMPORTANT: If permanent signing secrets are not configured, this first APK
+            uses a temporary self-signed certificate. Later upgrades may require
+            uninstalling the previous APK before installing another version.
