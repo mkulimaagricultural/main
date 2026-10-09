@@ -62,7 +62,7 @@ test('/app has accessible Windows download linked to versioned installer and kee
   const stylesheet = await text('assets/css/app.css');
   const builder = await text('scripts/build.mjs');
   const xml = await text('sitemap.xml');
-  assert.ok(page.includes('<title>Download MAo Studio for Windows | MAo</title>'));
+  assert.ok(page.includes('<title>Download MAo Studio for Windows &amp; Android | MAo</title>'));
   assert.ok(page.includes('<link rel="canonical" href="https://www.mkulimaagricultural.org/app/">'));
   assert.ok(page.includes('id="windows-download"'));
   assert.ok(page.includes('https://github.com/mkulimaagricultural/main/releases/download/mao-studio-v1.0.0/MAo-Studio-Setup-1.0.0.exe'));
