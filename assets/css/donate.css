@@ -1,6 +1,7 @@
 .mao-page-hero--donate {
-  background: radial-gradient(circle at 83% 18%, rgba(152, 194, 123, .25), transparent 38%),
-    linear-gradient(118deg, #102c20 0%, #245239 70%, #3a6748 100%);
+  background: linear-gradient(95deg, rgba(10,37,27,.94) 0%, rgba(10,37,27,.80) 42%, rgba(10,37,27,.42) 77%, rgba(10,37,27,.21) 100%),
+    url('../img/hero-farm.jpg') center 52% / cover no-repeat;
+  background-color: #112b20;
 }
 
 .mao-donate-layout { max-width: 860px; }
@@ -66,4 +67,9 @@
 @media (max-width: 650px) {
   .mao-donate-card__bank { align-items: flex-start; flex-direction: column; gap: .75rem; }
   .mao-donate-card__details { grid-template-columns: 1fr; gap: 1.6rem; }
+}
+
+/* Mobile donation hero: stronger overlay keeps text legible over the field. */
+@media (max-width: 700px) {
+  .mao-page-hero--donate { background-image: linear-gradient(90deg, rgba(10,37,27,.95), rgba(10,37,27,.78)), url('../img/hero-farm.jpg'); background-position: center, 66% center; }
 }
