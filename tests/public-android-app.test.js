@@ -1,0 +1,73 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+const read = (path) => readFile(new URL('../' + path, import.meta.url), 'utf8');
+
+test('public Android APK is a separate app, not MAo Studio CMS', async () => {
+  const java = await read('android-public/app/src/main/java/org/mkulimaagricultural/website/MainActivity.java');
+  const manifest = await read('android-public/app/src/main/AndroidManifest.xml');
+  const gradle = await read('android-public/app/build.gradle');
+  assert.ok(java.includes('https://www.mkulimaagricultural.org/'));
+  assert.ok(java.includes('mkulimaagricultural.org'));
+  assert.ok(java.includes('www.mkulimaagricultural.org'));
+  assert.ok(!java.includes('https://admin.mkulimaagricultural.org/admin/'));
+  assert.ok(java.includes('openOutside(destination)'), 'non-public URLs leave the app');
+  assert.ok(java.includes('if (isPublicMAoPage(destination)) return false;'));
+  assert.ok(java.includes('handler.cancel()'));
+  assert.ok(java.includes('setAllowFileAccess(false)'));
+  assert.ok(java.includes('setAllowContentAccess(false)'));
+  assert.ok(java.includes('setAllowUniversalAccessFromFileURLs(false)'));
+  assert.ok(java.includes('setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW)'));
+  assert.ok(java.includes('setSafeBrowsingEnabled(true)'));
+  assert.ok(java.includes('setAcceptThirdPartyCookies(webView, false)'));
+  assert.ok(java.includes('onBackPressed()'));
+  assert.ok(!java.includes('addJavascriptInterface('));
+  assert.ok(!java.includes('handler.proceed()'));
+  assert.ok(manifest.includes('android:allowBackup="false"'));
+  assert.ok(manifest.includes('android:usesCleartextTraffic="false"'));
+  assert.ok(manifest.includes('android.permission.INTERNET'));
+  assert.ok(!manifest.includes('android.permission.CAMERA'));
+  assert.ok(!manifest.includes('android.permission.RECORD_AUDIO'));
+  assert.ok(gradle.includes("applicationId 'org.mkulimaagricultural.website'"));
+  assert.ok(!gradle.includes("applicationId 'org.mkulimaagricultural.studio'"));
+  assert.ok(gradle.includes('minSdk 26'));
+  assert.ok(gradle.includes('debuggable false'));
+  assert.ok(gradle.includes('signingConfig signingConfigs.release'));
+});
+
+test('Android public build produces signed release and official logo', async () => {
+  const wf = await read('.github/workflows/android-public-apk.yml');
+  const icon = await read('android-public/scripts/generate_icons.py');
+  assert.ok(wf.includes('gradle --no-daemon --stacktrace -p android-public :app:assembleRelease'));
+  assert.ok(wf.includes('apksigner'));
+  assert.ok(wf.includes("org.mkulimaagricultural.website"));
+  assert.ok(wf.includes('MAo-Android-v1.0.0.apk'));
+  assert.ok(wf.includes('tag_name: mao-public-android-v1.0.0'));
+  assert.ok(wf.includes('softprops/action-gh-release@v2'));
+  assert.ok(wf.includes('MAO_PUBLIC_ANDROID_KEYSTORE_B64'));
+  assert.ok(wf.includes("github.event_name == 'push'"));
+  assert.ok(icon.includes('mao-logo.png'));
+  assert.ok(icon.includes('ic_launcher.png'));
+});
+
+test('/download page publishes public Android APK without confusing it with staff CMS', async () => {
+  const html = await read('download/index.html');
+  const css = await read('assets/css/download.css');
+  const build = await read('scripts/build.mjs');
+  const xml = await read('sitemap.xml');
+  assert.ok(html.includes('id="android-download"'));
+  assert.ok(html.includes('https://github.com/mkulimaagricultural/main/releases/download/mao-public-android-v1.0.0/MAo-Android-v1.0.0.apk'));
+  assert.ok(html.includes('<link rel="canonical" href="https://www.mkulimaagricultural.org/download/">'));
+  assert.ok(html.includes('property="og:url" content="https://www.mkulimaagricultural.org/download/"'));
+  assert.ok(html.includes('Android 8.0'));
+  assert.ok(html.includes('Play Protect'));
+  assert.ok(html.includes('href="/app/"'));
+  assert.ok(html.includes('No CMS account needed'));
+  assert.ok(css.includes('@media(max-width:590px)'));
+  assert.ok(build.includes("'app', 'download'"));
+  assert.ok(xml.includes('https://www.mkulimaagricultural.org/download/'));
+  const cms = await read('app/index.html');
+  assert.ok(cms.includes('MAo Studio'));
+  assert.ok(cms.includes('id="android-download"'));
+  assert.ok(cms.includes('mao-studio-android-v1.0.0'));
+});
