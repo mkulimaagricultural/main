@@ -1,0 +1,41 @@
+{
+  "name": "mao-public-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Official MAo public website for Windows (no CMS access)",
+  "author": "Mkulima Agricultural Organization",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "^40.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "org.mkulimaagricultural.website",
+    "productName": "MAo",
+    "artifactName": "MAo-Windows-Setup-${version}.${ext}",
+    "asar": true,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": ["main.cjs", "package.json"],
+    "win": {
+      "target": ["nsis"],
+      "icon": "build/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MAo",
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": null
+  }
+}
