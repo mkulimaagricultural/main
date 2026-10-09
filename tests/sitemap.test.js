@@ -4,14 +4,14 @@ import { readFile } from 'node:fs/promises';
 import { buildSitemap, onRequestGet } from '../functions/sitemap.xml.js';
 
 const base = 'https://www.mkulimaagricultural.org';
-const expectedPaths = ['/', '/about/', '/focus/', '/updates/', '/contact/', '/donate/', '/app/'];
+const expectedPaths = ['/', '/about/', '/focus/', '/updates/', '/contact/', '/donate/', '/app/', '/download/'];
 
-test('committed sitemap contains seven public pages and the initial published article', async () => {
+test('committed sitemap contains eight public pages and the initial published article', async () => {
   const xml = await readFile(new URL('../sitemap.xml', import.meta.url), 'utf8');
   assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?>/);
   for (const path of expectedPaths) assert.ok(xml.includes('<loc>' + base + path + '</loc>'));
   assert.ok(xml.includes('<loc>' + base + '/updates/mao-founders-meeting-001</loc>'));
-  assert.equal((xml.match(/<url>/g) || []).length, 8);
+  assert.equal((xml.match(/<url>/g) || []).length, 9);
   assert.ok(!xml.includes('/admin/'));
 });
 
@@ -25,7 +25,7 @@ test('dynamic sitemap emits pages, published articles and real lastmod, no unsaf
   ]);
   assert.ok(xml.includes('<loc>' + base + '/updates/first-post</loc><lastmod>2026-10-08T18:00:00.000Z</lastmod>'));
   assert.ok(xml.includes('<loc>' + base + '/updates/second-post</loc><lastmod>2026-10-09T01:02:03.000Z</lastmod>'));
-  assert.equal((xml.match(/<url>/g) || []).length, 9);
+  assert.equal((xml.match(/<url>/g) || []).length, 10);
   assert.ok(!xml.includes('invalid&amp;evil'));
   assert.ok(!xml.includes('/admin'));
 });
