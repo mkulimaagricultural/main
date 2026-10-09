@@ -87,7 +87,7 @@ test('real sidebar and New update clicks open editor; deep link opens after load
   const page = await readFile(new URL('../admin/index.html', import.meta.url), 'utf8');
   const script = await readFile(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
   assert.match(page, /id="write-update-link" href="\/admin\/\?compose=1#editor-panel"/);
-  assert.match(page, /admin\.js\?v=20261009-hide-idle-banner/);
+  assert.match(page, /admin\.js\?v=20261009-single-editor/);
 
   const simulate = async (search = '') => {
     const nodes = new Map();

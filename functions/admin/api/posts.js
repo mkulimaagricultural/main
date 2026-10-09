@@ -1,4 +1,5 @@
 import { json, parsePostRequest, loadPostMedia } from '../../../lib/posts.js';
+import { resolvePostTranslations } from '../../../lib/translate.js';
 
 export async function onRequestGet({ env, data }) {
   if (!env.DB) return json({ error: 'CMS database is not configured.' }, 503);
@@ -22,13 +23,16 @@ export async function onRequestPost({ request, env, data }) {
   if (!env.DB) return json({ error: 'CMS database is not configured.' }, 503);
   const { post, error } = await parsePostRequest(request);
   if (error) return json({ error }, 400);
+  let translated;
+  try { translated = await resolvePostTranslations(post, env.AI); }
+  catch (cause) { return json({ error: cause.message || 'Could not translate post.' }, 503); }
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
   try {
     const operations = [env.DB.prepare(`
       INSERT INTO posts (id, title_en, title_sw, body_en, body_sw, image_url, status, created_at, updated_at, published_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(id, post.title_en, post.title_sw, post.body_en, post.body_sw, post.image_url,
+    `).bind(id, translated.title_en, translated.title_sw, translated.body_en, translated.body_sw, post.image_url,
       post.status, now, now, post.status === 'published' ? now : null),
     env.DB.prepare('INSERT INTO post_meta (post_id, created_by, updated_by) VALUES (?, ?, ?)')
       .bind(id, data.admin.email, data.admin.email)];

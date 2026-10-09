@@ -59,6 +59,7 @@
   });
   let posts = [];
   let filter = 'active';
+  let editingPost = null;
 
   function message(value, kind = '') { status.textContent = value; status.dataset.kind = kind; status.hidden = !value; }
   function field(name) { return form.elements.namedItem(name); }
@@ -74,13 +75,19 @@
     attachments = [];
     form.reset();
     field('id').value = '';
+    editingPost = null;
     renderMedia();
     document.getElementById('editor-heading').textContent = 'New update';
     panel.hidden = true;
   }
   function editPost(post) {
     releasePreviews();
-    for (const name of ['id', 'title_en', 'title_sw', 'body_en', 'body_sw', 'status']) field(name).value = post[name] || '';
+    editingPost = post;
+    field('id').value = post.id;
+    field('source_lang').value = 'en';
+    field('title').value = post.title_en || '';
+    field('description').value = post.body_en || '';
+    field('status').value = post.status || 'draft';
     attachments = (post.media?.length ? post.media : post.image_url ? [{ url: post.image_url, type: 'image' }] : [])
       .map((item) => ({ url: item.url, type: item.type }));
     mediaInput.value = '';
@@ -89,6 +96,12 @@
     panel.hidden = false;
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  field('source_lang').addEventListener('change', () => {
+    if (!editingPost) return;
+    const language = field('source_lang').value;
+    field('title').value = editingPost[`title_${language}`] || '';
+    field('description').value = editingPost[`body_${language}`] || '';
+  });
   function cell(row, value, className) {
     const td = document.createElement('td');
     if (className) td.className = className;
@@ -168,10 +181,11 @@
         item.url = result.media_url;
         item.file = null;
       }
-      const post = Object.fromEntries(['title_en', 'title_sw', 'body_en', 'body_sw', 'status'].map((name) => [name, field(name).value]));
+      const post = Object.fromEntries(['title', 'description', 'source_lang', 'status'].map((name) => [name, field(name).value]));
       post.media = attachments.map((item) => ({ url: item.url, type: item.type }));
       post.image_url = post.media.find((item) => item.type === 'image')?.url || '';
       const id = field('id').value;
+      message('Translating and saving update…');
       await api(id ? `/admin/api/posts/${encodeURIComponent(id)}` : '/admin/api/posts', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(post) });
       resetForm(); await load();
       message(post.status === 'published' ? 'Update published. It is live on the website.' : 'Draft saved. It is not visible on the public website.', 'success');
