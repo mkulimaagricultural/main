@@ -72,8 +72,8 @@ jobs:
           APK="android/app/build/outputs/apk/release/app-release.apk"
           test -s "$APK"
           test "$(stat -c%s "$APK")" -gt 50000
-          apksigner verify --verbose "$APK"
-          aapt dump badging "$APK" | grep "package: name='org.mkulimaagricultural.studio'"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep "package: name='org.mkulimaagricultural.studio'"
           cp "$APK" android/MAo-Studio-Android-v1.0.0.apk
           sha256sum android/MAo-Studio-Android-v1.0.0.apk
       - name: Upload tested APK as CI artifact
