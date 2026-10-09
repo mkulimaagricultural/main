@@ -40,7 +40,7 @@ test('public pages and article HTML register the public PWA; Studio uses its own
   assert.match(admin, /src="\/assets\/js\/pwa-admin\.js\?v=pwa-install-1"/);
   const registration = await source('assets/js/pwa-admin.js');
   assert.ok(registration.includes("register('/admin/sw.js'"));
-  assert.match(registration, /scope:\\s*'\\/admin\\/'/);
+  assert.ok(registration.includes("scope: '/admin/'"));
 });
 
 test('Studio worker never intercepts API calls and returns only a generic offline page', async () => {
