@@ -29,16 +29,15 @@ test('homepage promotes business contact emails and Donate shows donation addres
   assert.ok(donate.includes('mailto:donation@mkulimaagricultural.org'));
 });
 
-test('former Gmail address is absent from Home and Contact but remains on Donate', async () => {
+test('Home, Contact and Donate link to the organization information address', async () => {
   const home = await text('index.html');
   const contact = await text('contact/index.html');
   const donate = await text('donate/index.html');
-  assert.ok(!home.includes('mkulimaagricultural@gmail.com'));
-  assert.ok(!contact.includes('mkulimaagricultural@gmail.com'));
   assert.ok(home.includes('href="mailto:info@mkulimaagricultural.org"'));
+  assert.ok(contact.includes('href="mailto:info@mkulimaagricultural.org"'));
   assert.ok(home.includes('href="mailto:help@mkulimaagricultural.org"'));
   assert.ok(home.includes('P.O. Box 149, Mbeya, Tanzania'));
-  assert.ok(donate.includes('href="mailto:mkulimaagricultural@gmail.com"'));
+  assert.ok(donate.includes('href="mailto:info@mkulimaagricultural.org"'));
 });
 
 test('business email labels remain bilingual', async () => {
