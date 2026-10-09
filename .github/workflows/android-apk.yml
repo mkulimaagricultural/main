@@ -1,0 +1,110 @@
+name: MAo Studio Android APK
+
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-apk.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android-apk:
+    name: Build signed MAo Studio APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out MAo repository
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+      - name: Install required Android packages
+        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+      - name: Generate Android launcher icons from official MAo logo
+        run: |
+          python3 -m pip install --disable-pip-version-check --user "Pillow>=10,<12"
+          python3 android/scripts/generate_icons.py
+      - name: Create signing key for release APK
+        env:
+          SIGNING_KEYSTORE_B64: ${{ secrets.MAO_ANDROID_SIGNING_KEYSTORE_B64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.MAO_ANDROID_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.MAO_ANDROID_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p android/build
+          if [[ -n "$SIGNING_KEYSTORE_B64" && -n "$SIGNING_STORE_PASSWORD" && -n "$SIGNING_KEY_PASSWORD" ]]; then
+            echo "$SIGNING_KEYSTORE_B64" | base64 --decode > android/build/mao-studio-release.jks
+            echo "Using configured long-term MAo signing certificate."
+            echo "MAO_ANDROID_STORE_PASSWORD=$SIGNING_STORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "MAO_ANDROID_KEY_PASSWORD=$SIGNING_KEY_PASSWORD" >> "$GITHUB_ENV"
+          else
+            STOREPASS="$(openssl rand -hex 24)"
+            echo "MAO_ANDROID_STORE_PASSWORD=$STOREPASS" >> "$GITHUB_ENV"
+            echo "MAO_ANDROID_KEY_PASSWORD=$STOREPASS" >> "$GITHUB_ENV"
+            keytool -genkeypair -noprompt -v -keystore android/build/mao-studio-release.jks -alias mao-studio -storepass "$STOREPASS" -keypass "$STOREPASS" -keyalg RSA -keysize 3072 -validity 3650 -dname "CN=MAo Studio, O=Mkulima Agricultural Organization, C=TZ"
+            echo "::warning::Using a temporary signing key for initial APK. Future APK updates require a stable signing certificate configured via GitHub Actions secrets; otherwise users will need to uninstall the older build."
+          fi
+          echo "MAO_ANDROID_KEYSTORE=$GITHUB_WORKSPACE/android/build/mao-studio-release.jks" >> "$GITHUB_ENV"
+          echo "MAO_ANDROID_KEY_ALIAS=mao-studio" >> "$GITHUB_ENV"
+      - name: Build signed non-debuggable Android release
+        run: gradle --no-daemon --stacktrace -p android :app:assembleRelease
+      - name: Verify APK signing and package metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/release/app-release.apk"
+          test -s "$APK"
+          test "$(stat -c%s "$APK")" -gt 50000
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep "package: name='org.mkulimaagricultural.studio'"
+          cp "$APK" android/MAo-Studio-Android-v1.0.0.apk
+          sha256sum android/MAo-Studio-Android-v1.0.0.apk
+      - name: Upload tested APK as CI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAo-Studio-Android-v1.0.0
+          path: android/MAo-Studio-Android-v1.0.0.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish public Android APK release
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mao-studio-android-v1.0.0
+          name: MAo Studio for Android — v1.0.0
+          target_commitish: main
+          make_latest: false
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: android/MAo-Studio-Android-v1.0.0.apk
+          body: |
+            Official MAo Studio Android v1.0.0 APK (Android 8.0 and newer).
+            Opens the existing Cloudflare Access-protected CMS; internet and an authorized account are required.
+            Supports photo/video file selection, regular CMS publishing, and Android back navigation.
+            This is a directly installed APK, not a Google Play Store listing.
+
+            IMPORTANT: this initial APK is signed with a self-signed CI certificate.
+            If permanent MAo signing secrets have not been configured, the certificate may change
+            on future builds and upgrading will require uninstalling the older APK first.
+            Configure MAO_ANDROID_SIGNING_KEYSTORE_B64, MAO_ANDROID_STORE_PASSWORD, and
+            MAO_ANDROID_KEY_PASSWORD secrets for durable, upgradeable signing before wider rollout.
+
+            Only download from the official MAo /app page or this repository release.
