@@ -22,7 +22,7 @@ test('mobile menu stacks outlined Donate above blue Contact button on all public
     assert.ok(mobile.includes('<span data-i18n="navDonate">Donate</span>'), path);
     assert.ok(mobile.includes('<span data-i18n="navContact">Contact us</span>'), path);
     assert.ok(mobile.includes('class="nav__donate-icon"'), 'preserve requested Donate heart: ' + path);
-    assert.ok(html.includes('mao.css?v=mobile-actions-1'), 'cache-bust missing: ' + path);
+    assert.ok(html.includes('mao.css?v=mobile-all-buttons-2'), 'cache-bust missing: ' + path);
     assert.ok(html.includes('class="mao-language-control"'), 'preserve language switch: ' + path);
     assert.ok(html.includes('class="nav__toggle"'), 'preserve menu toggle: ' + path);
   }
