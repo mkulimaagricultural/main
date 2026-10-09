@@ -1,0 +1,84 @@
+name: MAo Public Windows App
+
+on:
+  pull_request:
+    paths:
+      - 'desktop-public/**'
+      - '.github/workflows/windows-public.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'desktop-public/**'
+      - '.github/workflows/windows-public.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-public-installer:
+    name: Package MAo public website for Windows
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out MAo source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate official Windows icon
+        run: |
+          python -m pip install --disable-pip-version-check "Pillow>=10,<12"
+          python desktop-public/scripts/create_icon.py
+      - name: Install desktop dependencies
+        working-directory: desktop-public
+        run: npm install --no-audit --no-fund
+      - name: Check public desktop script
+        run: node --check desktop-public/main.cjs
+      - name: Build Windows x64 installer
+        working-directory: desktop-public
+        run: npm run dist:win
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Validate generated installer
+        shell: pwsh
+        run: |
+          $installer = "desktop-public/dist/MAo-Windows-Setup-1.0.0.exe"
+          if (-not (Test-Path $installer)) { throw "Installer missing: $installer" }
+          $file = Get-Item $installer
+          if ($file.Length -lt 10000000) { throw "Installer unexpectedly small: $($file.Length) bytes" }
+          Get-FileHash $installer -Algorithm SHA256 | Format-List
+      - name: Save Windows installer build
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAo-Public-Windows-Setup
+          path: desktop-public/dist/MAo-Windows-Setup-1.0.0.exe
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish public Windows release
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mao-public-windows-v1.0.0
+          name: MAo for Windows — v1.0.0
+          target_commitish: main
+          make_latest: false
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: desktop-public/dist/MAo-Windows-Setup-1.0.0.exe
+          body: |
+            Official MAo public website desktop application for Windows 10/11 (64-bit).
+            This app opens www.mkulimaagricultural.org. No CMS account or access is required.
+            Requires an internet connection for up-to-date content.
+
+            Installer: MAo-Windows-Setup-1.0.0.exe
+
+            This version is not digitally code-signed. Windows SmartScreen may display
+            an Unknown publisher notice. Verify the file comes from the official MAo
+            website or this repository. Do not disable Windows security protections.
