@@ -1,8 +1,8 @@
 // Keep sitemap.xml updated with MAo's published (non-trashed) CMS posts.
 // Static sitemap.xml is also committed as a build-time fallback.
 const ORIGIN = 'https://www.mkulimaagricultural.org';
-const STATIC_PATHS = ['/', '/about/', '/focus/', '/updates/', '/contact/', '/donate/', '/app/'];
-const POST_LIMIT = 49_993; // Seven fixed URLs + up to 49,993 posts (50,000 maximum).
+const STATIC_PATHS = ['/', '/about/', '/focus/', '/updates/', '/contact/', '/donate/', '/app/', '/download/'];
+const POST_LIMIT = 49_992; // Eight fixed URLs + up to 49,992 posts (50,000 maximum).
 const ID_PATTERN = /^[a-zA-Z0-9-]{1,64}$/;
 
 function escapeXml(value) {
