@@ -20,10 +20,30 @@ test('all six public pages render Contact as a regular navigation link and prese
     for (const section of ['navAbout', 'navFocus', 'navUpdates', 'navContact', 'navDonate']) {
       assert.ok(html.includes('data-i18n="' + section + '"'), section + ' must remain bilingual in ' + path);
     }
-    assert.ok(html.includes('mao.css?v=' + (path === 'index.html' ? 'home-intro-1' : 'public-logo-intro-2')), 'updated CSS not loaded by ' + path);
+    assert.ok(html.includes('mao.css?v=' + 'donate-heart-1'), 'updated CSS not loaded by ' + path);
   }
 });
 
+
+test('Donate pill has an accessible decorative heart icon across six pages, preserving language switching', async () => {
+  for (const path of pages) {
+    const html = await read(path);
+    const link = html.match(/<a href="\/donate\/" class="(nav__donate(?: nav__donate--active)?)">([\s\S]*?)<\/a>/);
+    assert.ok(link, 'Donate link missing: ' + path);
+    assert.ok(link[2].includes('<svg class="nav__donate-icon"'), 'Heart icon absent: ' + path);
+    assert.ok(link[2].includes('aria-hidden="true"'), 'Icon must be decorative: ' + path);
+    assert.ok(link[2].includes('stroke="currentColor"'), 'Icon must inherit button color: ' + path);
+    assert.ok(link[2].includes('<span data-i18n="navDonate">Donate</span>'), 'Translatable label absent: ' + path);
+    assert.ok(!link[2].includes('<svg') || link[2].indexOf('<svg') < link[2].indexOf('<span'), 'Icon should precede label: ' + path);
+    assert.equal(link[1].includes('nav__donate--active'), path === 'donate/index.html', path);
+  }
+  const css = await read('assets/css/mao.css');
+  assert.ok(css.includes('.nav__donate{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;'));
+  assert.ok(css.includes('.nav__donate-icon{display:block;flex:none;width:18px;height:18px;stroke:currentColor;pointer-events:none}'));
+  const translations = await read('assets/js/language.js');
+  assert.ok(translations.includes("navDonate: 'Donate'"));
+  assert.ok(translations.includes("navDonate: 'Changia'"));
+});
 test('uppercase styling targets only public navigation labels, not language picker or CMS', async () => {
   const css = await read('assets/css/mao.css');
   assert.ok(css.includes('.nav__links > a{text-transform:uppercase;letter-spacing:.035em;white-space:nowrap}'));
